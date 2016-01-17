@@ -5,7 +5,6 @@ using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour {
 	
-	public BFS bfs;
 
 	private Dictionary<int,List<Node>> adjMap;
 	private List<Node> adjList;
