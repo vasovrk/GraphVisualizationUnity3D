@@ -8,16 +8,16 @@ public class BFS2 {
 	public BFS2(){
 	}
 
-	public LinkedList<Node2> findPath(Node2 startNode, Node2 endNode){
-		 LinkedList<Node2> visitedList = new LinkedList<Node2>();
+	public LinkedList<Node> findPath(Node startNode, Node endNode){
+		 LinkedList<Node> visitedList = new LinkedList<Node>();
 
-		 LinkedList<Node2> bfsList = new LinkedList<Node2>();
+		 LinkedList<Node> bfsList = new LinkedList<Node>();
 
 		bfsList.AddLast (startNode);
 		startNode.Parent = null;
 
 		while (!(bfsList.Count == 0)) {
-			Node2 node = bfsList.First.Value;
+			Node node = bfsList.First.Value;
 			bfsList.Remove(node);
 
 			if (node.NodeValue == endNode.NodeValue) {
@@ -27,7 +27,7 @@ public class BFS2 {
 			else{
 				visitedList.AddLast (node);
 
-				foreach(Node2 neighbouNode in node.Neighbours){
+				foreach(Node neighbouNode in node.Neighbours){
 					if (!(visitedList.Contains (neighbouNode)) && !(bfsList.Contains (neighbouNode))) {
 						neighbouNode.Parent = node;
 						bfsList.AddLast (neighbouNode);
@@ -38,8 +38,8 @@ public class BFS2 {
 		return null;
 	}
 
-	private LinkedList<Node2> constructPath(Node2 node){
-		LinkedList<Node2> path = new LinkedList<Node2> ();
+	private LinkedList<Node> constructPath(Node node){
+		LinkedList<Node> path = new LinkedList<Node> ();
 		path.AddLast (node);
 		node = node.Parent;
 		while (node != null) {
