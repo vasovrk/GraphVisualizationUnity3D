@@ -2,20 +2,20 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Node2 {
+public class Node {
 	private int nodeValue;
 
-	private List<Node2> neighbours;
+	private List<Node> neighbours;
 
-	private Node2 parent;
+	private Node parent;
 
 	private int nodeRow;
 
 	private int nodeColumn;
 
-	public Node2(){
+	public Node(){
 
-		neighbours = new List<Node2> ();
+		neighbours = new List<Node> ();
 	}
 
 	public int NodeValue {
@@ -25,14 +25,14 @@ public class Node2 {
 
 	}
 
-	public List<Node2> Neighbours {
+	public List<Node> Neighbours {
 		get { return neighbours; }
 
 		set { this.neighbours = value; }
 
 	}
 
-	public  Node2 Parent{
+	public  Node Parent{
 		get { return parent; }
 
 		set { this.parent = value; }

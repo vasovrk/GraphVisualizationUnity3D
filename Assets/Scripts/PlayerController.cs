@@ -7,14 +7,14 @@ public class PlayerController : MonoBehaviour {
 	
 	public BFS bfs;
 
-	private Dictionary<int,List<Node2>> adjMap;
-	private List<Node2> adjList;
+	private Dictionary<int,List<Node>> adjMap;
+	private List<Node> adjList;
 
-	private List<Node2> nodes = new List<Node2> ();
+	private List<Node> nodes = new List<Node> ();
 	private int gridSize = 3;
 	private int[,] gridArray = new int[3,3];
-	private Node2 startNode;
-	private Node2 endnode;
+	private Node startNode;
+	private Node endnode;
 
 	void Start ()
 	{
@@ -30,7 +30,7 @@ public class PlayerController : MonoBehaviour {
 
 				gridArray [i, j] = counter;
 
-				Node2 node = new Node2 ();
+				Node node = new Node ();
 				node.NodeRow = i;
 				node.NodeColumn = j;
 				node.NodeValue = counter;
@@ -41,10 +41,10 @@ public class PlayerController : MonoBehaviour {
 
 			}
 		}
-		adjMap = new Dictionary<int,List<Node2>> ();
+		adjMap = new Dictionary<int,List<Node>> ();
 
-
-		foreach(Node2 node in nodes) {
+		//TODO: startNode and endNode to be initialized on user interaction
+		foreach(Node node in nodes) {
 			this.findAdjacency (node);
 			adjMap.Add (node.NodeValue,node.Neighbours);
 			if (node.NodeValue == 4) {
@@ -56,9 +56,9 @@ public class PlayerController : MonoBehaviour {
 		}
 			
 		BFS2 bfs = new BFS2 ();
-		LinkedList<Node2> path = new LinkedList<Node2> ();
+		LinkedList<Node> path = new LinkedList<Node> ();
 		path = bfs.findPath (startNode, endnode);
-		foreach (Node2 node in path) {
+		foreach (Node node in path) {
 			Debug.Log (node.NodeValue);
 		}
 			
@@ -67,7 +67,7 @@ public class PlayerController : MonoBehaviour {
 
 
 	}
-	private void findAdjacency(Node2 node){
+	private void findAdjacency(Node node){
 		
 		for (int row = -1; row <= 1; row++) {
 			for (int column = -1; column <= 1; column++) {
@@ -85,14 +85,14 @@ public class PlayerController : MonoBehaviour {
 					continue;
 				}
 				int gridNode = gridArray [node.NodeRow + row, node.NodeColumn + column];
-				Node2 newNeighbour = findNodeInNodeList(gridNode);
+				Node newNeighbour = findNodeInNodeList(gridNode);
 				node.Neighbours.Add (newNeighbour);
 			}
 		}
 	}
 		
-	private Node2 findNodeInNodeList(int nodeValue){
-		foreach (Node2 n in nodes) {
+	private Node findNodeInNodeList(int nodeValue){
+		foreach (Node n in nodes) {
 			if (n.NodeValue == nodeValue) {
 				return n;
 			} else {
