@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Node {
+	//skatoules
 	private int nodeValue;
 
 	private List<Node> neighbours;
