@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Node {
-	//skatoules
+
 	private int nodeValue;
 
 	private List<Node> neighbours;
@@ -13,6 +13,8 @@ public class Node {
 	private int nodeRow;
 
 	private int nodeColumn;
+
+	public GameObject objReference;
 
 	public Node(){
 

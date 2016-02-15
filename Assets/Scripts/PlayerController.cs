@@ -10,100 +10,136 @@ public class PlayerController : MonoBehaviour {
 	private List<Node> adjList;
 
 	private List<Node> nodes = new List<Node> ();
-	private int gridSize = 3;
-	private int[,] gridArray = new int[3,3];
+	private static readonly int gridWidth = 3;
+	private static readonly int gridHeight = 5;
+	private int[,] gridArray = new int[gridHeight, gridWidth];
 	private Node startNode;
-	private Node endnode;
+	private Node endNode;
 
 	void Start ()
 	{
-
 		int counter = 0;
-		for (int i = 0; i < gridSize; i++) {
-			for (int j = 0; j < gridSize; j++) {
+		for (int i = 0; i < gridHeight; i++) {
+			for (int j = 0; j < gridWidth; j++) {
 				GameObject cube = GameObject.CreatePrimitive (PrimitiveType.Cube);
-				float rand = UnityEngine.Random.Range (1, 2.5f);
-				cube.transform.localScale = new Vector3 (1, rand, 1);
-				cube.transform.localPosition = new Vector3 (i, 0 , j);
+				cube.name = counter.ToString();
+				cube.transform.localPosition = new Vector3 (j, 0, i);
 
+				cube.GetComponent<MeshRenderer> ().material.color = new Color (0f, 1f, 0f);
 
 				gridArray [i, j] = counter;
 
+				//Maybe Node should inherrit the GameObject class in order to have extra utilities.
 				Node node = new Node ();
 				node.NodeRow = i;
 				node.NodeColumn = j;
 				node.NodeValue = counter;
+				node.objReference = cube;
 
 				nodes.Add (node);
 
 				counter++;
-
 			}
 		}
 		adjMap = new Dictionary<int,List<Node>> ();
 
 		//TODO: startNode and endNode to be initialized on user interaction
 		foreach(Node node in nodes) {
-			this.findAdjacency (node);
+			this.findAdj (node);
 			adjMap.Add (node.NodeValue,node.Neighbours);
-			if (node.NodeValue == 4) {
-				startNode = node;
-			}
-			if (node.NodeValue == 4) {
-				endnode = node;
-			}
 		}
 			
-		BFS2 bfs = new BFS2 ();
-		LinkedList<Node> path = new LinkedList<Node> ();
-		path = bfs.findPath (startNode, endnode);
-		foreach (Node node in path) {
-			Debug.Log (node.NodeValue);
-		}
 			
 //		bfs = new BFS (adjMap);
 //		bfs.findBFS (0);
 
 
 	}
+
 	private void findAdjacency(Node node){
 		
 		for (int row = -1; row <= 1; row++) {
 			for (int column = -1; column <= 1; column++) {
 				
-				if (node.NodeRow + row < 0 || node.NodeRow + row > gridSize-1) {
+				if (node.NodeRow + row < 0 || node.NodeRow + row > gridHeight - 1) {
 					continue;
 				}
 
-				if (node.NodeColumn + column < 0 || node.NodeColumn + column > gridSize-1) {
+				if (node.NodeColumn + column < 0 || node.NodeColumn + column > gridWidth - 1) {
 					continue;
 				}
-					
 
 				if ((node.NodeRow + row == node.NodeRow) && (node.NodeColumn + column == node.NodeColumn)) {
 					continue;
 				}
+
 				int gridNode = gridArray [node.NodeRow + row, node.NodeColumn + column];
 				Node newNeighbour = findNodeInNodeList(gridNode);
 				node.Neighbours.Add (newNeighbour);
 			}
 		}
+		Debug.Log (node.NodeValue);
+		Debug.Log ("Neighbours!!!");
+		foreach (Node neighbour in node.Neighbours) {
+			Debug.Log (neighbour.NodeValue);
+		}
+		Debug.Log ("------------------------------------");
 	}
 		
+
+	public void findAdj(Node node){
+		int row = node.NodeRow;
+		int column = node.NodeColumn;
+		int gridNode;
+		Node newNeighbour;
+
+		if (!(row - 1 < 0)) {
+			gridNode = gridArray [row - 1, column];
+			newNeighbour = findNodeInNodeList (gridNode);
+			node.Neighbours.Add (newNeighbour);
+		}
+		if(!(row + 1> gridHeight-1)){
+			
+			gridNode = gridArray [row + 1, column];
+			newNeighbour = findNodeInNodeList(gridNode);
+			node.Neighbours.Add (newNeighbour);
+				
+		}
+
+		if (!(column + 1 > gridWidth - 1 )) {
+			gridNode = gridArray [row, column + 1];
+			newNeighbour = findNodeInNodeList (gridNode);
+			node.Neighbours.Add (newNeighbour);
+		}
+
+		if(!(column - 1 < 0)){
+			gridNode = gridArray [row, column - 1];
+			newNeighbour = findNodeInNodeList(gridNode);
+			node.Neighbours.Add (newNeighbour);
+		}
+
+
+	
+
+		Debug.Log (node.NodeValue);
+		Debug.Log ("Neighbours!!!");
+		foreach (Node neighbour in node.Neighbours) {
+			Debug.Log (neighbour.NodeValue);
+		}
+		Debug.Log ("------------------------------------");
+	}
+
 	private Node findNodeInNodeList(int nodeValue){
 		foreach (Node n in nodes) {
 			if (n.NodeValue == nodeValue) {
 				return n;
-			} else {
-				continue;
 			}
 		}
 		return null;
 	}
 
 
-	void FixedUpdate ()
-	{
+	void FixedUpdate () {
 //		float moveHorizontal = Input.GetAxis ("Horizontal");
 //		float moveVertical = Input.GetAxis ("Vertical");
 //
@@ -112,7 +148,54 @@ public class PlayerController : MonoBehaviour {
 //			
 //
 //		rb.AddForce (movement * speed);
+		HandleMouseEvents();
+		HandleKeyboardEvents ();
 	}
+
+	private void FindPath() {
+			BFS2 bfs = new BFS2 ();
+			LinkedList<Node> path = new LinkedList<Node> ();
+			path = bfs.findPath (startNode, endNode);
+			path.AddLast (startNode);
+			foreach (Node node in path) {
+				Debug.Log (node.NodeValue);
+			}
+	}
+
+	private void HandleKeyboardEvents() {
+		
+		if (Input.GetKeyDown (KeyCode.F)) {
+			FindPath ();
+		}
+	}
+
+	private void HandleMouseEvents() {
+		if(Input.GetMouseButtonDown(0)){
+
+			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			RaycastHit hit;
+			// Casts the ray and get the first game object hit
+			Physics.Raycast(ray, out hit);
+
+			Debug.Log("Start Node: " + hit.transform );
+			this.startNode = findNodeInNodeList(int.Parse(hit.collider.name));
+			this.startNode.objReference.GetComponent<MeshRenderer> ().material.color = new Color (1f, 0f, 0f);
+		}
+
+		if (Input.GetMouseButtonDown (1)) {
+
+			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			RaycastHit hit;
+			// Casts the ray and get the first game object hit
+			Physics.Raycast(ray, out hit);
+
+			Debug.Log("End Node: " + hit.transform );
+			this.endNode = findNodeInNodeList(int.Parse(hit.collider.name));
+			this.endNode.objReference.GetComponent<MeshRenderer> ().material.color = new Color (0f, 0f, 1f);
+		}
+	}
+
+
 		
 }
 

@@ -40,14 +40,15 @@ public class BFS2 {
 
 	private LinkedList<Node> constructPath(Node node){
 		LinkedList<Node> path = new LinkedList<Node> ();
-		path.AddLast (node);
-		node = node.Parent;
+
 		while (node != null) {
+
+			node.objReference.GetComponent<MeshRenderer> ().material.color = new Color (1f, 1f, 0f);
+
 			path.AddLast(node);
-			if (node != null) {
-				node = node.Parent;
-			}
+			node = node.Parent;
 		}
+
 		return path;
 	}
 }
