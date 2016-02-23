@@ -17,7 +17,6 @@ public class Node {
 	public GameObject objReference;
 
 	public Node(){
-
 		neighbours = new List<Node> ();
 	}
 
@@ -34,6 +33,7 @@ public class Node {
 		set { this.neighbours = value; }
 
 	}
+
 
 	public  Node Parent{
 		get { return parent; }

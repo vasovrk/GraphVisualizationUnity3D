@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour {
 	
@@ -16,8 +17,17 @@ public class PlayerController : MonoBehaviour {
 	private Node startNode;
 	private Node endNode;
 
+	public Dictionary<NodeState,Color> materialMapper;
+
 	void Start ()
 	{
+		materialMapper = new Dictionary<NodeState,Color> ();
+
+		materialMapper.Add(NodeState.START_NODE,new Color(1f, 0f, 0f));
+		materialMapper.Add(NodeState.END_NODE,new Color(0f, 0f, 1f));
+		materialMapper.Add(NodeState.DEFAULT,new Color(0f, 1f, 0f));
+
+
 		int counter = 0;
 		for (int i = 0; i < gridHeight; i++) {
 			for (int j = 0; j < gridWidth; j++) {
@@ -170,7 +180,30 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void HandleMouseEvents() {
-		if(Input.GetMouseButtonDown(0)){
+			Color startNodeColor;
+		    Color endNodeColor;
+		Color defaultNodeColor;
+
+			materialMapper.TryGetValue(NodeState.START_NODE,out startNodeColor);
+		    materialMapper.TryGetValue (NodeState.END_NODE, out endNodeColor);
+		materialMapper.TryGetValue(NodeState.DEFAULT,out defaultNodeColor);
+
+
+
+		    if(Input.GetMouseButtonDown(0)){
+		//	SceneManager.LoadScene ("demScene");
+//			Scene scene = SceneManager.GetSceneByName ("demScene");
+//			SceneManager.SetActiveScene (scene);
+		
+			foreach (Node n in nodes) {
+				n.objReference.GetComponent<MeshRenderer> ().material.color = defaultNodeColor;
+			}
+					
+		
+			if(this.startNode != null){
+				this.startNode.objReference.GetComponent<MeshRenderer> ().material.color = defaultNodeColor;
+
+			}
 
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;
@@ -179,10 +212,21 @@ public class PlayerController : MonoBehaviour {
 
 			Debug.Log("Start Node: " + hit.transform );
 			this.startNode = findNodeInNodeList(int.Parse(hit.collider.name));
-			this.startNode.objReference.GetComponent<MeshRenderer> ().material.color = new Color (1f, 0f, 0f);
+
+			
+			this.startNode.objReference.GetComponent<MeshRenderer> ().material.color = startNodeColor;
+				
+		//	this.startNode.objReference.GetComponent<MeshRenderer> ().material.color = new Color (1f, 0f, 0f);
+
+
 		}
 
 		if (Input.GetMouseButtonDown (1)) {
+
+			if(this.endNode != null){
+				this.endNode.objReference.GetComponent<MeshRenderer> ().material.color = defaultNodeColor;
+
+			}
 
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;
@@ -191,7 +235,7 @@ public class PlayerController : MonoBehaviour {
 
 			Debug.Log("End Node: " + hit.transform );
 			this.endNode = findNodeInNodeList(int.Parse(hit.collider.name));
-			this.endNode.objReference.GetComponent<MeshRenderer> ().material.color = new Color (0f, 0f, 1f);
+			this.endNode.objReference.GetComponent<MeshRenderer> ().material.color = endNodeColor;
 		}
 	}
 
