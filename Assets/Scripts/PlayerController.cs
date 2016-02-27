@@ -11,8 +11,8 @@ public class PlayerController : MonoBehaviour {
 	private List<Node> adjList;
 
 	private List<Node> nodes = new List<Node> ();
-	private static readonly int gridWidth = 3;
-	private static readonly int gridHeight = 5;
+	private static readonly int gridWidth = 5;
+	private static readonly int gridHeight = 4;
 	private int[,] gridArray = new int[gridHeight, gridWidth];
 	private Node startNode;
 	private Node endNode;
@@ -29,11 +29,27 @@ public class PlayerController : MonoBehaviour {
 
 
 		int counter = 0;
+		int rowCounter = 0;
+		int colCounter = 0;
+
+		float heightOffs = 0.0f;
+		float widthOffs = 0.0f;
+
+		if (gridHeight % 2 == 0) {
+			heightOffs = 0.5f;
+		}
+
+		if (gridWidth % 2 == 0) {
+			widthOffs = 0.5f;
+		}
+
 		for (int i = 0; i < gridHeight; i++) {
+			
 			for (int j = 0; j < gridWidth; j++) {
+				
 				GameObject cube = GameObject.CreatePrimitive (PrimitiveType.Cube);
 				cube.name = counter.ToString();
-				cube.transform.localPosition = new Vector3 (j, 0, i);
+				cube.transform.localPosition = new Vector3 ((i - (gridHeight / 2.0f)) + heightOffs , 0, (j - (gridWidth / 2.0f) + widthOffs));
 
 				cube.GetComponent<MeshRenderer> ().material.color = new Color (0f, 1f, 0f);
 
@@ -49,7 +65,9 @@ public class PlayerController : MonoBehaviour {
 				nodes.Add (node);
 
 				counter++;
+				colCounter++;
 			}
+			rowCounter++;
 		}
 		adjMap = new Dictionary<int,List<Node>> ();
 
@@ -196,12 +214,16 @@ public class PlayerController : MonoBehaviour {
 //			SceneManager.SetActiveScene (scene);
 		
 			foreach (Node n in nodes) {
-				n.objReference.GetComponent<MeshRenderer> ().material.color = defaultNodeColor;
+				if ((n.objReference.GetComponent<MeshRenderer> ().material.color != endNodeColor) && 
+					(n.objReference.GetComponent<MeshRenderer> ().material.color != startNodeColor)) {
+					n.objReference.GetComponent<MeshRenderer> ().material.color = defaultNodeColor;
+				}
 			}
 					
-		
+			
 			if(this.startNode != null){
 				this.startNode.objReference.GetComponent<MeshRenderer> ().material.color = defaultNodeColor;
+				this.startNode = null;
 
 			}
 
@@ -211,8 +233,9 @@ public class PlayerController : MonoBehaviour {
 			Physics.Raycast(ray, out hit);
 
 			Debug.Log("Start Node: " + hit.transform );
+	
 			this.startNode = findNodeInNodeList(int.Parse(hit.collider.name));
-
+		
 			
 			this.startNode.objReference.GetComponent<MeshRenderer> ().material.color = startNodeColor;
 				
@@ -223,10 +246,17 @@ public class PlayerController : MonoBehaviour {
 
 		if (Input.GetMouseButtonDown (1)) {
 
+			foreach (Node n in nodes) {
+				if ((n.objReference.GetComponent<MeshRenderer> ().material.color != endNodeColor) && 
+					(n.objReference.GetComponent<MeshRenderer> ().material.color != startNodeColor)) {
+					n.objReference.GetComponent<MeshRenderer> ().material.color = defaultNodeColor;
+				}
+			}
 			if(this.endNode != null){
 				this.endNode.objReference.GetComponent<MeshRenderer> ().material.color = defaultNodeColor;
-
+				this.endNode = null;
 			}
+
 
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;

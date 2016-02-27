@@ -6,6 +6,8 @@ public class CameraController : MonoBehaviour {
 	public float yRotation;
 	public float zRotation;
 
+	public float speed = 0.5f;
+
 
 	void Start () {
 		transform.localEulerAngles = new Vector3 (xRotation, yRotation, zRotation);
@@ -13,6 +15,8 @@ public class CameraController : MonoBehaviour {
 	
 
 	void Update () {
-	
+//		xRotation += Input.GetAxis("x") * speed;
+//		yRotation += Input.GetAxis ("y") * speed;
+//		zRotation += Input.GetAxis( * speed;
 	}
 }
