@@ -11,48 +11,67 @@ public class PlayerController : MonoBehaviour {
 	private List<Node> adjList;
 
 	private List<Node> nodes = new List<Node> ();
-	private static readonly int gridWidth = 5;
-	private static readonly int gridHeight = 4;
+	private static readonly int gridWidth = 10;
+	private static readonly int gridHeight = 10;
 	private int[,] gridArray = new int[gridHeight, gridWidth];
 	private Node startNode;
 	private Node endNode;
 
-	public Dictionary<NodeState,Color> materialMapper;
+	public Material nodeDefaultMaterial;
+	public Material startNodeMaterial;
+	public Material endNodeMaterial;
+	public Material pathMaterial;
+	public Material visitedMaterial;
+	public Material neighbourMaterial;
 
+
+	public GameObject demoPrefab;
+
+	public Dictionary<NodeState, Color> materialMapper;
 	void Start ()
 	{
-		materialMapper = new Dictionary<NodeState,Color> ();
+			
 
-		materialMapper.Add(NodeState.START_NODE,new Color(1f, 0f, 0f));
-		materialMapper.Add(NodeState.END_NODE,new Color(0f, 0f, 1f));
-		materialMapper.Add(NodeState.DEFAULT,new Color(0f, 1f, 0f));
+
+//			Vector3 v = new Vector3 (1.5f, -1.5f);
+//			startNodePrefab.transform.localPosition = this.startNode.objReference.transform.localPosition;
+//		//We find the particle system in the scene.
+//		GameObject smokeParticle = GameObject.Find ("SmokeParticleSystem");
+//		ParticleSystem psys = smokeParticle.GetComponent<ParticleSystem> ();
+//
+//		//We change the particle system's emission radius based on the grid size.
+//		ParticleSystem.ShapeModule module = psys.shape;
+//		int max_size = Math.Max (gridWidth, gridHeight);
+//		module.radius = max_size / 2.0f;
+//
+//		//We change the particle system's emission rate based on the grid size.
+//		ParticleSystem.EmissionModule emissionModule = psys.emission;
+//		emissionModule.rate = new ParticleSystem.MinMaxCurve(emissionModule.rate.constantMax * max_size);
+
+//		psys.startSpeed = 0.3f;
+//		psys.startSize = (gridHeight + gridWidth) / 2;
+
 
 
 		int counter = 0;
-		int rowCounter = 0;
-		int colCounter = 0;
+	
+		float offset = 0.5f;
 
-		float heightOffs = 0.0f;
-		float widthOffs = 0.0f;
-
-		if (gridHeight % 2 == 0) {
-			heightOffs = 0.5f;
-		}
-
-		if (gridWidth % 2 == 0) {
-			widthOffs = 0.5f;
-		}
+		float halfWidth = gridWidth / 2.0f;
+		float halfHeight = gridHeight / 2.0f;
 
 		for (int i = 0; i < gridHeight; i++) {
 			
 			for (int j = 0; j < gridWidth; j++) {
 				
-				GameObject cube = GameObject.CreatePrimitive (PrimitiveType.Cube);
-				cube.name = counter.ToString();
-				cube.transform.localPosition = new Vector3 ((i - (gridHeight / 2.0f)) + heightOffs , 0, (j - (gridWidth / 2.0f) + widthOffs));
+				GameObject sphere = GameObject.CreatePrimitive (PrimitiveType.Sphere);
+				sphere.name = counter.ToString();
+				sphere.transform.localPosition = new Vector3 ((i - halfHeight) + offset , 0, (j - halfWidth) + offset);
+				
+				sphere.GetComponent<MeshRenderer> ().material = nodeDefaultMaterial;
 
-				cube.GetComponent<MeshRenderer> ().material.color = new Color (0f, 1f, 0f);
 
+				//deformSphere (sphere);
 				gridArray [i, j] = counter;
 
 				//Maybe Node should inherrit the GameObject class in order to have extra utilities.
@@ -60,14 +79,13 @@ public class PlayerController : MonoBehaviour {
 				node.NodeRow = i;
 				node.NodeColumn = j;
 				node.NodeValue = counter;
-				node.objReference = cube;
+				node.objReference = sphere;
 
 				nodes.Add (node);
 
 				counter++;
-				colCounter++;
+	
 			}
-			rowCounter++;
 		}
 		adjMap = new Dictionary<int,List<Node>> ();
 
@@ -76,13 +94,9 @@ public class PlayerController : MonoBehaviour {
 			this.findAdj (node);
 			adjMap.Add (node.NodeValue,node.Neighbours);
 		}
-			
-			
-//		bfs = new BFS (adjMap);
-//		bfs.findBFS (0);
-
 
 	}
+
 
 	private void findAdjacency(Node node){
 		
@@ -168,61 +182,85 @@ public class PlayerController : MonoBehaviour {
 
 
 	void FixedUpdate () {
-//		float moveHorizontal = Input.GetAxis ("Horizontal");
-//		float moveVertical = Input.GetAxis ("Vertical");
-//
-//		Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
-//
-//			
-//
-//		rb.AddForce (movement * speed);
+		float mSec = Time.time;
+		foreach (Node node in nodes) {
+			float animationOffset = node.animationOffset;
+			float y = ((float)Math.Sin(mSec) * 0.05f) 
+				+ ((float)Math.Cos((mSec * 1000f * animationOffset * 3.0) / 2000.0f) * 0.06f);
+
+			Vector3 pos = node.objReference.transform.localPosition;
+			pos.y = y;
+
+			node.objReference.transform.localPosition = pos;
+
+//			GameObject flame = GameObject.Find ("demoFlame");
+//		    ParticleSystem flamePsys = flame.GetComponent<ParticleSystem> ();
+//			flamePsys.emission.enabled = false;
+//			Vector3 pos2 = flamePsys.transform.localPosition;
+//			pos2.y = y;
+//			flamePsys.transform.localPosition = pos2;
+
+
+		}
+
 		HandleMouseEvents();
 		HandleKeyboardEvents ();
 	}
-
+	bool pathFound = false;
 	private void FindPath() {
-			BFS2 bfs = new BFS2 ();
+		    BFS2 bfs = new BFS2 (visitedMaterial,neighbourMaterial);
 			LinkedList<Node> path = new LinkedList<Node> ();
-			path = bfs.findPath (startNode, endNode);
+			
+		    path = bfs.findPath (startNode, endNode);
 			path.AddLast (startNode);
+
+		    pathFound = true;
+
 			foreach (Node node in path) {
+			demoPrefab = (GameObject)Instantiate (demoPrefab);
+		
+			demoPrefab.transform.localPosition = node.objReference.transform.localPosition;
+			ParticleSystem PathParticle = demoPrefab.GetComponent<ParticleSystem> ();
+			ParticleSystem.EmissionModule em = PathParticle.emission;
+			em.enabled = true;
+			PathParticle.startSize = 0.7f;
+			node.objReference.GetComponent<MeshRenderer> ().material = pathMaterial;
 				Debug.Log (node.NodeValue);
 			}
+
+
+
 	}
 
 	private void HandleKeyboardEvents() {
 		
-		if (Input.GetKeyDown (KeyCode.F)) {
+		if (Input.GetKeyDown (KeyCode.F) && (pathFound == false)) {
+			
 			FindPath ();
 		}
 	}
+	GameObject startNodePrefab;
+	GameObject endNodePrefab;
 
 	private void HandleMouseEvents() {
-			Color startNodeColor;
-		    Color endNodeColor;
-		Color defaultNodeColor;
+			
 
-			materialMapper.TryGetValue(NodeState.START_NODE,out startNodeColor);
-		    materialMapper.TryGetValue (NodeState.END_NODE, out endNodeColor);
-		materialMapper.TryGetValue(NodeState.DEFAULT,out defaultNodeColor);
-
-
-
+	
 		    if(Input.GetMouseButtonDown(0)){
 		//	SceneManager.LoadScene ("demScene");
 //			Scene scene = SceneManager.GetSceneByName ("demScene");
 //			SceneManager.SetActiveScene (scene);
 		
-			foreach (Node n in nodes) {
-				if ((n.objReference.GetComponent<MeshRenderer> ().material.color != endNodeColor) && 
-					(n.objReference.GetComponent<MeshRenderer> ().material.color != startNodeColor)) {
-					n.objReference.GetComponent<MeshRenderer> ().material.color = defaultNodeColor;
-				}
-			}
-					
+//			foreach (Node n in nodes) {
+//				if ((n.objReference.GetComponent<MeshRenderer> ().material.color != endNodeColor) && 
+//					(n.objReference.GetComponent<MeshRenderer> ().material.color != startNodeColor)) {
+//					n.objReference.GetComponent<MeshRenderer> ().material.color = defaultNodeColor;
+//				}
+//			}
+		
 			
 			if(this.startNode != null){
-				this.startNode.objReference.GetComponent<MeshRenderer> ().material.color = defaultNodeColor;
+				this.startNode.objReference.GetComponent<MeshRenderer> ().material = nodeDefaultMaterial;
 				this.startNode = null;
 
 			}
@@ -236,9 +274,23 @@ public class PlayerController : MonoBehaviour {
 	
 			this.startNode = findNodeInNodeList(int.Parse(hit.collider.name));
 		
-			
-			this.startNode.objReference.GetComponent<MeshRenderer> ().material.color = startNodeColor;
-				
+			GameObject startGameObject = GameObject.Find ("StartNodeParticleSystem");
+			ParticleSystem SNParticle = startGameObject.GetComponent<ParticleSystem> ();
+
+			ParticleSystem.EmissionModule em = SNParticle.emission;
+			em.enabled = true;
+			SNParticle.startSize = 0.7f;
+
+			SNParticle.transform.localPosition = this.startNode.objReference.transform.localPosition;
+//			GameObject flame = GameObject.Find ("demoFlame");
+//					    ParticleSystem flamePsys = flame.GetComponent<ParticleSystem> ();
+//						flamePsys.emission.enabled = false;
+//						Vector3 pos2 = flamePsys.transform.localPosition;
+		//	startNodePrefab = (GameObject)Instantiate (demoPrefab);
+		//	Vector3 v = new Vector3 (1.5f, -1.5f);
+		//	startNodePrefab.transform.localPosition = this.startNode.objReference.transform.localPosition;
+		//	startNodeMaterial.SetColor ("_EmissionColor", new Color(0.9044118f,0.1795523f,0.7960993f));
+			this.startNode.objReference.GetComponent<MeshRenderer> ().material = startNodeMaterial;
 		//	this.startNode.objReference.GetComponent<MeshRenderer> ().material.color = new Color (1f, 0f, 0f);
 
 
@@ -246,14 +298,15 @@ public class PlayerController : MonoBehaviour {
 
 		if (Input.GetMouseButtonDown (1)) {
 
-			foreach (Node n in nodes) {
-				if ((n.objReference.GetComponent<MeshRenderer> ().material.color != endNodeColor) && 
-					(n.objReference.GetComponent<MeshRenderer> ().material.color != startNodeColor)) {
-					n.objReference.GetComponent<MeshRenderer> ().material.color = defaultNodeColor;
-				}
-			}
+//			foreach (Node n in nodes) {
+//				if ((n.objReference.GetComponent<MeshRenderer> ().material != endNodeMaterial) && 
+//					(n.objReference.GetComponent<MeshRenderer> ().material != startNodeMaterial)) {
+//					n.objReference.GetComponent<MeshRenderer> ().material = nodeDefaultMaterial;
+//
+//				}
+//			}
 			if(this.endNode != null){
-				this.endNode.objReference.GetComponent<MeshRenderer> ().material.color = defaultNodeColor;
+				this.endNode.objReference.GetComponent<MeshRenderer> ().material = nodeDefaultMaterial;
 				this.endNode = null;
 			}
 
@@ -265,7 +318,16 @@ public class PlayerController : MonoBehaviour {
 
 			Debug.Log("End Node: " + hit.transform );
 			this.endNode = findNodeInNodeList(int.Parse(hit.collider.name));
-			this.endNode.objReference.GetComponent<MeshRenderer> ().material.color = endNodeColor;
+			this.endNode.objReference.GetComponent<MeshRenderer> ().material = endNodeMaterial;
+
+			GameObject endGameObject = GameObject.Find ("EndNodeParticleSystem");
+			ParticleSystem ENParticle = endGameObject.GetComponent<ParticleSystem> ();
+
+			ParticleSystem.EmissionModule em2 = ENParticle.emission;
+			em2.enabled = true;
+			ENParticle.startSize = 0.7f;
+
+			ENParticle.transform.localPosition = this.endNode.objReference.transform.localPosition;
 		}
 	}
 

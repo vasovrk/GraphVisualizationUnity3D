@@ -16,7 +16,13 @@ public class Node {
 
 	public GameObject objReference;
 
+	public GameObject particleSystem;
+
+	public float animationOffset; 
+
 	public Node(){
+
+		animationOffset = Random.Range (0.0f, 1.0f);
 		neighbours = new List<Node> ();
 	}
 
@@ -52,6 +58,12 @@ public class Node {
 		get{return  nodeColumn;}
 
 		set {nodeColumn = value;}
+	}
+
+	public GameObject ObjReference {
+		get{ return objReference; }
+
+		set{ objReference = value; }
 	}
 
 }
