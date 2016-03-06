@@ -2,6 +2,8 @@ ty generated #
 # =============== #
 Temp/
 Library/
+*.png
+*.jpg
  
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
