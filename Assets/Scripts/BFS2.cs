@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
-using UnityEditor.VersionControl;
 
 public class BFS2 {
 	public Material visitedMaterial;
@@ -16,6 +15,11 @@ public class BFS2 {
 		//this.time = time;
 	}
 
+	public void UpdateTime(float time){
+		//Debug.Log (time);
+
+
+	}
 
 		
 
@@ -34,7 +38,7 @@ public class BFS2 {
 
 				node.objReference.GetComponent<MeshRenderer> ().material = visitedMaterial;
 
-				Debug.Log ("The time is:" + Time.time);
+//				Debug.Log ("The time is:" + Time.time);
 				if (node.NodeValue == endNode.NodeValue) {
 				return constructPath (node);
 			
@@ -43,7 +47,7 @@ public class BFS2 {
 
 					foreach (Node neighbouNode in node.Neighbours) {
 						if (!(visitedList.Contains (neighbouNode)) && !(bfsList.Contains (neighbouNode))) {
-							neighbouNode.objReference.GetComponent<MeshRenderer> ().material = neighbourMaterial;
+						neighbouNode.objReference.GetComponent<MeshRenderer> ().material = visitedMaterial;
 							neighbouNode.Parent = node;
 							bfsList.AddLast (neighbouNode);
 						}

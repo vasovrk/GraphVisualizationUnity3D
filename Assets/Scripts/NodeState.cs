@@ -7,6 +7,8 @@ public enum NodeState{
 
 	END_NODE,
 
+	PATH_NODE,
+
 	DEFAULT
 
 
