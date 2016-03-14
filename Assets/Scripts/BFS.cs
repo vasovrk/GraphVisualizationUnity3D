@@ -3,13 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 
-public class BFS2 {
+public class BFS {
 	public Material visitedMaterial;
 	public Material neighbourMaterial;
 
 
 
-	public BFS2(Material visitedMaterial, Material neighbourMaterial){
+	public BFS(Material visitedMaterial, Material neighbourMaterial){
 		this.visitedMaterial = visitedMaterial;
 		this.neighbourMaterial = neighbourMaterial;
 		//this.time = time;
@@ -27,16 +27,18 @@ public class BFS2 {
 		
 		 LinkedList<Node> visitedList = new LinkedList<Node>();
 
-		 LinkedList<Node> bfsList = new LinkedList<Node>();
-
-		bfsList.AddLast (startNode);
+		 Queue<Node> bfsList = new Queue<Node>();
+		//LinkedList<Node> bfsList = new LinkedList<Node>();
+		//bfsList.AddLast (startNode);
+		bfsList.Enqueue(startNode);
 		startNode.Parent = null;
 
 		while (!(bfsList.Count == 0)) {
-			Node node = bfsList.First.Value;
-				bfsList.Remove (node);
-
-				node.objReference.GetComponent<MeshRenderer> ().material = visitedMaterial;
+//			    Node node = bfsList.First.Value;
+//				bfsList.Remove (node);
+			    Node node = bfsList.Dequeue();
+			    Debug.Log (node.NodeValue);
+				
 
 //				Debug.Log ("The time is:" + Time.time);
 				if (node.NodeValue == endNode.NodeValue) {
@@ -44,12 +46,13 @@ public class BFS2 {
 			
 				} else {
 					visitedList.AddLast (node);
-
+				node.objReference.GetComponent<MeshRenderer> ().material = visitedMaterial;
 					foreach (Node neighbouNode in node.Neighbours) {
 						if (!(visitedList.Contains (neighbouNode)) && !(bfsList.Contains (neighbouNode))) {
-						neighbouNode.objReference.GetComponent<MeshRenderer> ().material = visitedMaterial;
+						//neighbouNode.objReference.GetComponent<MeshRenderer> ().material = visitedMaterial;
 							neighbouNode.Parent = node;
-							bfsList.AddLast (neighbouNode);
+					//	bfsList.AddLast (neighbouNode);
+						bfsList.Enqueue (neighbouNode);
 						}
 					}
 				}
