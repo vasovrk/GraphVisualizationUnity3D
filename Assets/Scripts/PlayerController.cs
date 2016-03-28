@@ -4,15 +4,16 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
-public class PlayerController : MonoBehaviour {
+public class PlayerController : MonoBehaviour
+{
 	
 
 	private Dictionary<int,List<Node>> adjMap;
 	private List<Node> adjList;
 
 	private List<Node> nodes = new List<Node> ();
-	private static readonly int gridWidth = 8;
-	private static readonly int gridHeight = 8;
+	private static readonly int gridWidth = 5;
+	private static readonly int gridHeight = 5;
 	private int gridSize = gridWidth * gridHeight;
 	private int[,] gridArray = new int[gridHeight, gridWidth];
 	private Node startNode;
@@ -36,10 +37,11 @@ public class PlayerController : MonoBehaviour {
 	public Dictionary<NodeState, Color> materialMapper;
 
 	private GridAdjacencyCalc nodeAdjacency;
+
 	void Start ()
 	{
 			
-		bfs = new BFS (visitedMaterial,neighbourMaterial);
+		bfs = new BFS (visitedMaterial, neighbourMaterial);
 		dfs = new DFS (visitedMaterial, neighbourMaterial);
 
 		int counter = 0;
@@ -49,13 +51,13 @@ public class PlayerController : MonoBehaviour {
 		float halfWidth = gridWidth / 2.0f;
 		float halfHeight = gridHeight / 2.0f;
 
-		for (int i = 0; i < gridHeight; i++) {
+
 			
-			for (int j = 0; j < gridWidth; j++) {
-				
+		for (int j = 0; j < gridWidth; j++) {
+			for (int i = 0; i < gridHeight; i++) {
 				GameObject sphere = GameObject.CreatePrimitive (PrimitiveType.Sphere);
-				sphere.name = counter.ToString();
-				sphere.transform.localPosition = new Vector3 ((i - halfHeight) + offset , 0, (j - halfWidth) + offset);
+				sphere.name = counter.ToString ();
+				sphere.transform.localPosition = new Vector3 ((i - halfHeight) + offset, 0, (j - halfWidth) + offset);
 				
 				sphere.GetComponent<MeshRenderer> ().material = nodeDefaultMaterial;
 
@@ -75,7 +77,7 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 
-		nodeAdjacency = new GridAdjacencyCalc (gridArray,gridHeight,gridWidth,nodes);
+		nodeAdjacency = new GridAdjacencyCalc (gridArray, gridHeight, gridWidth, nodes);
 		nodeAdjacency.adjacencyMap ();
 		//TODO: startNode and endNode to be initialized on user interaction
 
@@ -85,7 +87,8 @@ public class PlayerController : MonoBehaviour {
 
 
 
-	private Node findNodeInNodeList(int nodeValue){
+	private Node findNodeInNodeList (int nodeValue)
+	{
 		foreach (Node n in nodes) {
 			if (n.NodeValue == nodeValue) {
 				return n;
@@ -95,14 +98,15 @@ public class PlayerController : MonoBehaviour {
 	}
 
 
-	void FixedUpdate () {
+	void FixedUpdate ()
+	{
 		bfs.UpdateTime (Time.time);
 
 		float mSec = Time.time;
 		foreach (Node node in nodes) {
 			float animationOffset = node.animationOffset;
-			float y = ((float)Math.Sin(mSec) * 0.05f) 
-				+ ((float)Math.Cos((mSec * 1000f * animationOffset * 3.0) / 2000.0f) * 0.06f);
+			float y = ((float)Math.Sin (mSec) * 0.05f)
+			          + ((float)Math.Cos ((mSec * 1000f * animationOffset * 3.0) / 2000.0f) * 0.06f);
 
 			Vector3 pos = node.objReference.transform.localPosition;
 			pos.y = y;
@@ -112,52 +116,56 @@ public class PlayerController : MonoBehaviour {
 
 		}
 
-		HandleMouseEvents();
+		HandleMouseEvents ();
 		HandleKeyboardEvents ();
 	}
+
 	bool pathFound = false;
 	ParticleSystem PathParticle;
-	private void FindPath(String algorithm) {
+
+	private void FindPath (String algorithm)
+	{
 		  
-			LinkedList<Node> path = new LinkedList<Node> ();
+		LinkedList<Node> path = new LinkedList<Node> ();
 		if (algorithm.Equals ("BFS")) {
-			path = bfs.findPath (startNode, endNode,false);
+			path = bfs.findPath (startNode, endNode, false);
 		}
 		if (algorithm.Equals ("DFS")) {
-			path = dfs.findDFS (startNode,endNode);
+			path = dfs.findDFS (startNode, endNode, false);
 
 		}
 		//	path.AddLast (startNode);
 
-		    pathFound = true;
+		pathFound = true;
 
 		foreach (Node node in path) {
 			
-			if (node.NodeValue == startNode.NodeValue){
+			if (node.NodeValue == startNode.NodeValue) {
 				node.objReference.GetComponent<MeshRenderer> ().material = pathMaterial;
-			    continue;
-		   }
+				continue;
+			}
 			if (node.NodeValue == endNode.NodeValue) {
 				node.objReference.GetComponent<MeshRenderer> ().material = pathMaterial;
 				continue;
 			
 			}
-				d = (GameObject)Instantiate (demoPrefab);
-				d.transform.localPosition = node.objReference.transform.localPosition;
-				PathParticle = d.GetComponent<ParticleSystem> ();
-				ParticleSystem.EmissionModule em = PathParticle.emission;
-				em.enabled = true;
-				PathParticle.startSize = 0.7f;
-				node.objReference.GetComponent<MeshRenderer> ().material = pathMaterial;
+			d = (GameObject)Instantiate (demoPrefab);
+			d.transform.localPosition = node.objReference.transform.localPosition;
+			PathParticle = d.GetComponent<ParticleSystem> ();
+			ParticleSystem.EmissionModule em = PathParticle.emission;
+			em.enabled = true;
+			PathParticle.startSize = 0.7f;
+			node.objReference.GetComponent<MeshRenderer> ().material = pathMaterial;
 
 
-			}
+		}
 
 
 
 	}
 
-	private void HandleKeyboardEvents() {
+	private void HandleKeyboardEvents ()
+	{
 		
 		if (Input.GetKeyDown (KeyCode.B) && (pathFound == false)) {
 			
@@ -167,20 +175,22 @@ public class PlayerController : MonoBehaviour {
 
 			FindPath ("DFS");
 		}
-		if (Input.GetKeyDown(KeyCode.E)) {
+		if (Input.GetKeyDown (KeyCode.E)) {
 			Debug.Log ("SKATOULES");
 			Application.Quit ();
 
 		}
 	}
+
 	GameObject startNodePrefab;
 	GameObject endNodePrefab;
 
-	private void HandleMouseEvents() {
+	private void HandleMouseEvents ()
+	{
 			
 
 	
-		    if(Input.GetMouseButtonDown(0)){
+		if (Input.GetMouseButtonDown (0)) {
 			
 			pathFound = false;
 			foreach (Node n in nodes) {
@@ -199,7 +209,7 @@ public class PlayerController : MonoBehaviour {
 
 			DestroyFlamePrefabs ();
 
-			if(this.startNode != null){
+			if (this.startNode != null) {
 				this.startNode.objReference.GetComponent<MeshRenderer> ().material = nodeDefaultMaterial;
 				this.startNode = null;
 
@@ -208,25 +218,25 @@ public class PlayerController : MonoBehaviour {
 
 			var hit = castObject ();
 
-			Debug.Log("Start Node: " + hit.transform );
+			Debug.Log ("Start Node: " + hit.transform);
 		
 			this.startNode = findNodeInNodeList (int.Parse (hit.collider.name));
 		
 		
 				
 
-				GameObject startGameObject = GameObject.Find ("StartNodeParticleSystem");
-				ParticleSystem StartNodeParticle = startGameObject.GetComponent<ParticleSystem> ();
+			GameObject startGameObject = GameObject.Find ("StartNodeParticleSystem");
+			ParticleSystem StartNodeParticle = startGameObject.GetComponent<ParticleSystem> ();
 
-				ParticleSystem.EmissionModule StartNodeEmissionModule = StartNodeParticle.emission;
-				StartNodeEmissionModule.enabled = true;
-				StartNodeParticle.startSize = 0.7f;
+			ParticleSystem.EmissionModule StartNodeEmissionModule = StartNodeParticle.emission;
+			StartNodeEmissionModule.enabled = true;
+			StartNodeParticle.startSize = 0.7f;
 
-				StartNodeParticle.transform.localPosition = this.startNode.objReference.transform.localPosition;
+			StartNodeParticle.transform.localPosition = this.startNode.objReference.transform.localPosition;
 			
-				this.startNode.nodeParticleSystem = StartNodeParticle;
+			this.startNode.nodeParticleSystem = StartNodeParticle;
 
-				this.startNode.objReference.GetComponent<MeshRenderer> ().material = startNodeMaterial;
+			this.startNode.objReference.GetComponent<MeshRenderer> ().material = startNodeMaterial;
 
 
 		}
@@ -251,14 +261,14 @@ public class PlayerController : MonoBehaviour {
 			DestroyFlamePrefabs ();
 
 
-			if(this.endNode != null){
+			if (this.endNode != null) {
 				this.endNode.objReference.GetComponent<MeshRenderer> ().material = nodeDefaultMaterial;
 				this.endNode = null;
 			}
 				
 			foreach (Node n in nodes) {
 
-				if (n.objReference.GetComponent<MeshRenderer>().material == startNodeMaterial) {
+				if (n.objReference.GetComponent<MeshRenderer> ().material == startNodeMaterial) {
 					n.objReference.GetComponent<MeshRenderer> ().material = nodeDefaultMaterial;
 				}
 
@@ -268,8 +278,8 @@ public class PlayerController : MonoBehaviour {
 
 			var hit = castObject ();
 
-			Debug.Log("End Node: " + hit.transform );
-			this.endNode = findNodeInNodeList(int.Parse(hit.collider.name));
+			Debug.Log ("End Node: " + hit.transform);
+			this.endNode = findNodeInNodeList (int.Parse (hit.collider.name));
 
 
 			GameObject endGameObject = GameObject.Find ("EndNodeParticleSystem");

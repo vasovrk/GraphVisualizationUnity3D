@@ -258,14 +258,15 @@ public class DrawLine : MonoBehaviour
 	public void DrawSpannTreeWithDFS ()
 	{
 
-//		if (startNode != null) {
-//			DFS dfs = new DFS ();
-//
-//			//dfs.findDFS (startNode, nodes [7], true);
-//			//dfs.dfsAlternative (startNode);
-//			DrawSpanTreeEdges ();
-//			clicked = false;
-//		}
+		if (startNode != null) {
+			DFS dfs = new DFS ();
+
+			//dfs.findDFS (startNode, nodes [7], true);
+			//dfs.dfsAlternative (startNode);
+			dfs.findDFS(startNode,nodes[7],true);
+			DrawSpanTreeEdges ();
+			clicked = false;
+		}
 
 
 	}
