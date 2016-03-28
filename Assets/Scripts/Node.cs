@@ -8,6 +8,8 @@ public class Node {
 
 	private List<Node> neighbours;
 
+	private List<Node> edges;
+
 	private Node parent;
 
 	private int nodeRow;
@@ -22,10 +24,13 @@ public class Node {
 
 	public NodeState nodeState;
 
+
+
 	public Node(){
 
 		animationOffset = Random.Range (0.0f, 1.0f);
 		neighbours = new List<Node> ();
+		edges = new List<Node> ();
 	}
 
 	public int NodeValue {
@@ -42,6 +47,12 @@ public class Node {
 
 	}
 
+	public List<Node> Edges {
+		get { return edges; }
+
+		set { this.edges = value; }
+
+	}
 
 	public  Node Parent{
 		get { return parent; }

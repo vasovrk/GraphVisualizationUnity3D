@@ -11,8 +11,8 @@ public class PlayerController : MonoBehaviour {
 	private List<Node> adjList;
 
 	private List<Node> nodes = new List<Node> ();
-	private static readonly int gridWidth = 3;
-	private static readonly int gridHeight = 3;
+	private static readonly int gridWidth = 8;
+	private static readonly int gridHeight = 8;
 	private int gridSize = gridWidth * gridHeight;
 	private int[,] gridArray = new int[gridHeight, gridWidth];
 	private Node startNode;
@@ -121,10 +121,11 @@ public class PlayerController : MonoBehaviour {
 		  
 			LinkedList<Node> path = new LinkedList<Node> ();
 		if (algorithm.Equals ("BFS")) {
-			path = bfs.findPath (startNode, endNode);
+			path = bfs.findPath (startNode, endNode,false);
 		}
 		if (algorithm.Equals ("DFS")) {
 			path = dfs.findDFS (startNode,endNode);
+
 		}
 		//	path.AddLast (startNode);
 
