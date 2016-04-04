@@ -16,14 +16,7 @@ public class BFS
 		this.neighbourMaterial = neighbourMaterial;
 		//this.time = time;
 	}
-
-	public void UpdateTime (float time)
-	{
-		//Debug.Log (time);
-
-
-	}
-
+		
 		
 	public BFS ()
 	{
@@ -35,19 +28,14 @@ public class BFS
 		LinkedList<Node> visitedList = new LinkedList<Node> ();
 
 		Queue<Node> bfsList = new Queue<Node> ();
-		//LinkedList<Node> bfsList = new LinkedList<Node>();
-		//bfsList.AddLast (startNode);
+
 		bfsList.Enqueue (startNode);
 		startNode.Parent = null;
 
 		while (!(bfsList.Count == 0)) {
-//			    Node node = bfsList.First.Value;
-//				bfsList.Remove (node);
 			Node node = bfsList.Dequeue ();
 			Debug.Log (node.NodeValue);
-				
 
-//				Debug.Log ("The time is:" + Time.time);
 			if ((node.NodeValue == endNode.NodeValue) && (spanTree==false)) {
 				return constructPath (node);
 			
@@ -58,10 +46,8 @@ public class BFS
 				}
 				foreach (Node neighbouNode in node.Neighbours) {
 					if (!(visitedList.Contains (neighbouNode)) && !(bfsList.Contains (neighbouNode))) {
-						//neighbouNode.objReference.GetComponent<MeshRenderer> ().material = visitedMaterial;
 						neighbouNode.Parent = node;
 						node.Edges.Add (neighbouNode);
-						//bfsList.AddLast (neighbouNode);
 						bfsList.Enqueue (neighbouNode);
 					}
 				}
@@ -76,44 +62,12 @@ public class BFS
 		}
 		return visitedList;
 	}
-
-//	public void findSpanTree (Node startNode)
-//	{
-//
-//		LinkedList<Node> visitedList = new LinkedList<Node> ();
-//
-//		Queue<Node> bfsList = new Queue<Node> ();
-//		bfsList.Enqueue (startNode);
-//		startNode.Parent = null;
-//
-//		while (!(bfsList.Count == 0)) {
-//			Node node = bfsList.Dequeue ();
-//			Debug.Log (node.NodeValue);
-//		
-//			visitedList.AddLast (node);
-//
-//			foreach (Node neighbouNode in node.Neighbours) {
-//				if (!(visitedList.Contains (neighbouNode)) && !(bfsList.Contains (neighbouNode))) {
-//
-//					neighbouNode.Parent = node;
-//					node.Edges.Add (neighbouNode);
-//					bfsList.Enqueue (neighbouNode);
-//				}
-//			}
-//
-//
-//		}
-//
-//
-//	}
-
+		
 	private LinkedList<Node> constructPath (Node node)
 	{
 		LinkedList<Node> path = new LinkedList<Node> ();
 
 		while (node != null) {
-
-			//node.objReference.GetComponent<MeshRenderer> ().material.color = new Color (1f, 1f, 0f);
 
 			path.AddLast (node);
 			node = node.Parent;

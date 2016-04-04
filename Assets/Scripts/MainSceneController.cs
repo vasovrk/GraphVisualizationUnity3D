@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
-public class PlayerController : MonoBehaviour
+public class MainSceneController : MonoBehaviour
 {
 	
 
@@ -80,8 +80,6 @@ public class PlayerController : MonoBehaviour
 
 		nodeAdjacency = new GridAdjacencyCalc (gridArray, gridHeight, gridWidth, nodes);
 		nodeAdjacency.adjacencyMap ();
-		//TODO: startNode and endNode to be initialized on user interaction
-
 
 	}
 
@@ -101,8 +99,6 @@ public class PlayerController : MonoBehaviour
 
 	void FixedUpdate ()
 	{
-		bfs.UpdateTime (Time.time);
-
 		float mSec = Time.time;
 		foreach (Node node in nodes) {
 			float animationOffset = node.animationOffset;
@@ -135,8 +131,7 @@ public class PlayerController : MonoBehaviour
 			path = dfs.findDFS (startNode, endNode, false);
 
 		}
-		//	path.AddLast (startNode);
-
+			
 		pathFound = true;
 
 		foreach (Node node in path) {

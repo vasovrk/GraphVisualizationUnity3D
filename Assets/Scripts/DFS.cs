@@ -24,7 +24,6 @@ public class DFS
 	public LinkedList<Node> findDFS (Node startNode, Node endNode, bool spanTree)
 	{
 		
-		//LinkedList<Node> visited = new LinkedList<Node> ();
 		if (visited != null) {
 			visited = new LinkedList<Node> ();
 		}
@@ -36,13 +35,9 @@ public class DFS
 
 		while (!(dfsStack.Count == 0)) {
 
-			//Node parent = dfsStack.Peek ();
 			Node node = dfsStack.Peek ();
 			Node neighbour = getAdjUnvisitedVertex (node);
 
-			//if (node.NodeValue == 11) {
-//				Debug.Log (node.NodeValue);
-//			}
 			if ((node.NodeValue == endNode.NodeValue) && spanTree == false) {
 				return constructPath (node);
 
@@ -60,9 +55,6 @@ public class DFS
 			}
 		
 
-
-
-
 		}
 		foreach (Node node in visited) {
 			Debug.Log (node.NodeValue);
@@ -76,8 +68,6 @@ public class DFS
 		LinkedList<Node> path = new LinkedList<Node> ();
 
 		while (node != null) {
-
-			//node.objReference.GetComponent<MeshRenderer> ().material.color = new Color (1f, 1f, 0f);
 
 			path.AddLast (node);
 			node = node.Parent;
@@ -97,14 +87,3 @@ public class DFS
 		return null;
 	}
 }
-//while (stack.Count != 0)
-//{
-//	Node tempNode = stack.Pop();
-//	Console.WriteLine("Node number: " + tempNode.Index);
-//	var negibours = tempNode.neighbors;
-//	foreach (var item in negibours)
-//	{
-//		stack.Push(item);
-//	}
-//}
-//}

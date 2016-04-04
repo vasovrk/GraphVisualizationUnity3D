@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class DrawLine : MonoBehaviour
+public class DrawLineController : MonoBehaviour
 {
 	private LineRenderer lineRenderer;
 	private float counter;

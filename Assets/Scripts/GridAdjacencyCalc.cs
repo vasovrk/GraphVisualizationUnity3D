@@ -38,38 +38,38 @@ public class GridAdjacencyCalc
 		}
 	}
 
-	private void findAdjacency (Node node)
-	{
-
-
-
-		for (int row = -1; row <= 1; row++) {
-			for (int column = -1; column <= 1; column++) {
-
-				if (node.NodeRow + row < 0 || node.NodeRow + row > gridHeight - 1) {
-					continue;
-				}
-
-				if (node.NodeColumn + column < 0 || node.NodeColumn + column > gridWidth - 1) {
-					continue;
-				}
-
-				if ((node.NodeRow + row == node.NodeRow) && (node.NodeColumn + column == node.NodeColumn)) {
-					continue;
-				}
-
-				int gridNode = gridArray [node.NodeRow + row, node.NodeColumn + column];
-				Node newNeighbour = findNodeInNodeList (gridNode);
-				node.Neighbours.Add (newNeighbour);
-			}
-		}
-		Debug.Log (node.NodeValue);
-		Debug.Log ("Neighbours!!!");
-		foreach (Node neighbour in node.Neighbours) {
-			Debug.Log (neighbour.NodeValue);
-		}
-		Debug.Log ("------------------------------------");
-	}
+//	private void findAdjacency (Node node)
+//	{
+//
+//
+//
+//		for (int row = -1; row <= 1; row++) {
+//			for (int column = -1; column <= 1; column++) {
+//
+//				if (node.NodeRow + row < 0 || node.NodeRow + row > gridHeight - 1) {
+//					continue;
+//				}
+//
+//				if (node.NodeColumn + column < 0 || node.NodeColumn + column > gridWidth - 1) {
+//					continue;
+//				}
+//
+//				if ((node.NodeRow + row == node.NodeRow) && (node.NodeColumn + column == node.NodeColumn)) {
+//					continue;
+//				}
+//
+//				int gridNode = gridArray [node.NodeRow + row, node.NodeColumn + column];
+//				Node newNeighbour = findNodeInNodeList (gridNode);
+//				node.Neighbours.Add (newNeighbour);
+//			}
+//		}
+//		Debug.Log (node.NodeValue);
+//		Debug.Log ("Neighbours!!!");
+//		foreach (Node neighbour in node.Neighbours) {
+//			Debug.Log (neighbour.NodeValue);
+//		}
+//		Debug.Log ("------------------------------------");
+//	}
 
 
 	public void findAdj (Node node)
