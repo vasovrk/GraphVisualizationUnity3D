@@ -12,8 +12,8 @@ public class PlayerController : MonoBehaviour
 	private List<Node> adjList;
 
 	private List<Node> nodes = new List<Node> ();
-	private static readonly int gridWidth = 5;
-	private static readonly int gridHeight = 5;
+	private static readonly int gridWidth = 8;
+	private static readonly int gridHeight = 8;
 	private int gridSize = gridWidth * gridHeight;
 	private int[,] gridArray = new int[gridHeight, gridWidth];
 	private Node startNode;
@@ -53,8 +53,9 @@ public class PlayerController : MonoBehaviour
 
 
 			
-		for (int j = 0; j < gridWidth; j++) {
-			for (int i = 0; i < gridHeight; i++) {
+
+		for (int i = 0; i < gridHeight; i++) {
+			for (int j = 0; j < gridWidth; j++) {
 				GameObject sphere = GameObject.CreatePrimitive (PrimitiveType.Sphere);
 				sphere.name = counter.ToString ();
 				sphere.transform.localPosition = new Vector3 ((i - halfHeight) + offset, 0, (j - halfWidth) + offset);
@@ -191,7 +192,7 @@ public class PlayerController : MonoBehaviour
 
 	
 		if (Input.GetMouseButtonDown (0)) {
-			
+			try{
 			pathFound = false;
 			foreach (Node n in nodes) {
 
@@ -212,12 +213,12 @@ public class PlayerController : MonoBehaviour
 			if (this.startNode != null) {
 				this.startNode.objReference.GetComponent<MeshRenderer> ().material = nodeDefaultMaterial;
 				this.startNode = null;
-
+			
 			}
 		
 
 			var hit = castObject ();
-
+			
 			Debug.Log ("Start Node: " + hit.transform);
 		
 			this.startNode = findNodeInNodeList (int.Parse (hit.collider.name));
@@ -237,7 +238,9 @@ public class PlayerController : MonoBehaviour
 			this.startNode.nodeParticleSystem = StartNodeParticle;
 
 			this.startNode.objReference.GetComponent<MeshRenderer> ().material = startNodeMaterial;
-
+			}catch(NullReferenceException e){
+				Debug.Log ("No Node has been selected");
+			}
 
 		}
 

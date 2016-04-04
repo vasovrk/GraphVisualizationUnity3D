@@ -42,8 +42,9 @@ public class GridAdjacencyCalc
 	{
 
 
-		for (int column = -1; column <= 1; column++) {
-			for (int row = -1; row <= 1; row++) {
+
+		for (int row = -1; row <= 1; row++) {
+			for (int column = -1; column <= 1; column++) {
 
 				if (node.NodeRow + row < 0 || node.NodeRow + row > gridHeight - 1) {
 					continue;
