@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MainSceneController : MonoBehaviour
 {
@@ -34,7 +35,6 @@ public class MainSceneController : MonoBehaviour
 	public GameObject flamePrefab;
 	private GameObject flame;
 
-	public Dictionary<NodeState, Color> materialMapper;
 
 	private AdjacencyCalc nodeAdjacency;
 
@@ -47,9 +47,15 @@ public class MainSceneController : MonoBehaviour
 	private ParticleSystem EndNodeParticleSystem;
 	private ParticleSystem.EmissionModule EndNodeEmissionModule;
 
+	private GameObject instructions;
+	private GameObject instructionsToggle;
 	void Start ()
 	{
-			
+		instructions = GameObject.FindGameObjectWithTag("instructionsText");
+		instructionsToggle = GameObject.FindGameObjectWithTag("instructionsToggle");
+
+		instructions.SetActive (false);
+		//We pass the visited material in BDF,DFS classes so that the material of the node changes when it's visited by the algorithm
 		bfs = new BFS (visitedMaterial);
 		dfs = new DFS (visitedMaterial);
 
@@ -77,7 +83,7 @@ public class MainSceneController : MonoBehaviour
 			for (int j = 0; j < gridWidth; j++) {
 				GameObject sphere = GameObject.CreatePrimitive (PrimitiveType.Sphere);
 				sphere.name = counter.ToString ();
-				sphere.transform.localPosition = new Vector3 ((i - halfHeight) + offset, 0, (j - halfWidth) + offset);
+				sphere.transform.localPosition = new Vector3 ((j - halfWidth) + offset, 0, (i - halfHeight) + offset);
 				
 				sphere.GetComponent<MeshRenderer> ().material = nodeDefaultMaterial;
 
@@ -118,6 +124,9 @@ public class MainSceneController : MonoBehaviour
 	{
 		float mSec = Time.time;
 		foreach (Node node in nodes) {
+			//The animationOffset variable that is stored in Node class, 
+			//is a random number that makes every node to move randomly up and down
+			//in the y axis, otherwise all the nodes would be equally moving at the same time.
 			float animationOffset = node.animationOffset;
 			float y = ((float)Math.Sin (mSec) * 0.05f)
 			          + ((float)Math.Cos ((mSec * 1000f * animationOffset * 3.0) / 2000.0f) * 0.06f);
@@ -131,11 +140,10 @@ public class MainSceneController : MonoBehaviour
 		}
 
 		HandleMouseEvents ();
-		//HandleKeyboardEvents ();
 	}
 
-	bool pathFound = false;
-	ParticleSystem PathParticle;
+	private bool pathFound = false;
+	private ParticleSystem PathParticle;
 
 	private void FindPath (String algorithm)
 	{
@@ -176,38 +184,42 @@ public class MainSceneController : MonoBehaviour
 
 
 	}
-	public void OnBFSbtnPressed(){
+
+	public void OnBFSbtnPressed ()
+	{
 		if (pathFound == false) {
 			FindPath ("BFS");
 		}
 	}
 
-	public void OnDFSbtnPressed(){
+	public void OnDFSbtnPressed ()
+	{
 		if (pathFound == false) {
 			FindPath ("DFS");
 		}
 	}
 
-	public void OnQuitBtnPressed(){
+	public void OnQuitBtnPressed ()
+	{
 		Debug.Log ("Checking That Application will quit");
 		Application.Quit ();
 	}
 
-	public void OnChangeSceneBtnPressed(){
+	public void OnChangeSceneBtnPressed ()
+	{
 		SceneManager.LoadScene ("SecondScene");	
 	}
-		
+
 
 
 	private void HandleMouseEvents ()
 	{
 			
-
-	
 		if (Input.GetMouseButtonDown (0)) {
 			RaycastHit hit = castObject ();
-			if (hit.collider == null || hit.collider.name.Equals("BFS") || hit.collider.name.Equals("DFS") || 
-				hit.collider.name.Equals("ChangeScreen") || hit.collider.name.Equals("Quit") ){
+			//If the collider is null or it's name is equal with some other object except for a sphere in the grid, then we don't want to set the startNode variable to be equal with it.
+			if (hit.collider == null || hit.collider.name.Equals ("BFS") || hit.collider.name.Equals ("DFS") ||
+			    hit.collider.name.Equals ("ChangeScreen") || hit.collider.name.Equals ("Quit")) {
 
 				return;
 			}
@@ -226,9 +238,10 @@ public class MainSceneController : MonoBehaviour
 				n.objReference.GetComponent<MeshRenderer> ().material = nodeDefaultMaterial;
 			
 			}
-
+			//The flame prefabs are being destroyed. The grid cleans up.
 			DestroyFlamePrefabs ();
 
+			//If startNode is previously selected, we "reset" it by stoping the startNodeParticle emission, setting the mode's material to default and finally setting the startNode variable to be equal with null.
 			if (this.startNode != null) {
 				this.startNode.objReference.GetComponent<MeshRenderer> ().material = nodeDefaultMaterial;
 				StartNodeEmissionModule.enabled = false;
@@ -237,16 +250,12 @@ public class MainSceneController : MonoBehaviour
 			
 			}
 		
-
-
 			Debug.Log ("Start Node: " + hit.transform);
-		
+
+			//The new startNode is found in the list of total nodes and we make the apropriate changes for the particle system and material
 			this.startNode = findNodeInNodeList (int.Parse (hit.collider.name));
 		
 		
-				
-				
-			
 			StartNodeEmissionModule.enabled = true;
 			StartNodeParticle.startSize = 0.7f;
 
@@ -258,10 +267,11 @@ public class MainSceneController : MonoBehaviour
 
 		} 
 
+		//Same thing for the endNode selection
 		if (Input.GetMouseButtonDown (1)) {
 			var hit = castObject ();
-			if (hit.collider == null || hit.collider.name.Equals("BFS") || hit.collider.name.Equals("DFS") || 
-				hit.collider.name.Equals("ChangeScreen") || hit.collider.name.Equals("Quit") ){
+			if (hit.collider == null || hit.collider.name.Equals ("BFS") || hit.collider.name.Equals ("DFS") ||
+			    hit.collider.name.Equals ("ChangeScreen") || hit.collider.name.Equals ("Quit")) {
 
 				return;
 			}
@@ -323,7 +333,7 @@ public class MainSceneController : MonoBehaviour
 		}
 	}
 
-		
+	//Casts a ray against all colliders in the scene and returns detailed information on what was hit.	
 	static RaycastHit castObject ()
 	{
 		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
@@ -332,6 +342,18 @@ public class MainSceneController : MonoBehaviour
 		Physics.Raycast (ray, out hit);
 		return hit;
 	}
+
+	public void instructionsVisible(){
+
+		if (instructionsToggle.GetComponent<Toggle> ().isOn) {
+			instructions.SetActive (true);
+		} else if(!instructionsToggle.GetComponent<Toggle> ().isOn){
+			instructions.SetActive (false);
+		}
+		Debug.Log ("something");
+	}
+
+
 }
 
 

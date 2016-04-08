@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class SecondSceneController : MonoBehaviour
 {
@@ -30,9 +31,17 @@ public class SecondSceneController : MonoBehaviour
 
 	private Color32 defaultStartLineColor = new Color32 (187, 240, 36, 255);
 	private Color32 defaultEndLineColor = new Color32 (11, 248, 71, 255);
+
+	private GameObject instructions;
+	private GameObject instructionsToggle;
 	// Use this for initialization
 	void Start ()
 	{
+
+		instructions = GameObject.FindGameObjectWithTag("instructionsText");
+		instructionsToggle = GameObject.FindGameObjectWithTag("instructionsToggle");
+
+		instructions.SetActive (false);
 		nodes = new List<Node> ();
 
 		n = (GameObject)Instantiate (nodePrefab);
@@ -318,4 +327,15 @@ public class SecondSceneController : MonoBehaviour
 	{
 		SceneManager.LoadScene ("MainScene");	
 	}
+
+	public void instructionsVisible(){
+
+		if (instructionsToggle.GetComponent<Toggle> ().isOn) {
+			instructions.SetActive (true);
+		} else if(!instructionsToggle.GetComponent<Toggle> ().isOn){
+			instructions.SetActive (false);
+		}
+		Debug.Log ("something");
+	}
+
 }
