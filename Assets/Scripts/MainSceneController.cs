@@ -24,7 +24,6 @@ public class MainSceneController : MonoBehaviour
 	public Material endNodeMaterial;
 	public Material pathMaterial;
 	public Material visitedMaterial;
-	public Material neighbourMaterial;
 
 	public GameObject endParticleSystem;
 	public GameObject startParticleSystem;
@@ -51,8 +50,8 @@ public class MainSceneController : MonoBehaviour
 	void Start ()
 	{
 			
-		bfs = new BFS (visitedMaterial, neighbourMaterial);
-		dfs = new DFS (visitedMaterial, neighbourMaterial);
+		bfs = new BFS (visitedMaterial);
+		dfs = new DFS (visitedMaterial);
 
 		startGameObject = GameObject.Find ("StartNodeParticleSystem");
 		StartNodeParticle = startGameObject.GetComponent<ParticleSystem> ();
@@ -63,6 +62,7 @@ public class MainSceneController : MonoBehaviour
 		EndNodeParticleSystem = endGameObject.GetComponent<ParticleSystem> ();
 
 		EndNodeEmissionModule = EndNodeParticleSystem.emission;
+
 
 
 		int counter = 0;

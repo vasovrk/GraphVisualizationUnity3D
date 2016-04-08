@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class DFS
 {
 	public Material visitedMaterial;
-	public Material neighbourMaterial;
 	private LinkedList<Node> visited;
 
 	public DFS ()
@@ -13,10 +12,9 @@ public class DFS
 		visited = new LinkedList<Node> ();
 	}
 
-	public DFS (Material visitedMaterial, Material neighbourMaterial)
+	public DFS (Material visitedMaterial)
 	{
 		this.visitedMaterial = visitedMaterial;
-		this.neighbourMaterial = neighbourMaterial;
 		visited = new LinkedList<Node> ();
 	}
 

@@ -6,15 +6,12 @@ using System.Threading;
 public class BFS
 {
 	public Material visitedMaterial;
-	public Material neighbourMaterial;
 
 
-
-	public BFS (Material visitedMaterial, Material neighbourMaterial)
+	public BFS (Material visitedMaterial)
 	{
 		this.visitedMaterial = visitedMaterial;
-		this.neighbourMaterial = neighbourMaterial;
-		//this.time = time;
+
 	}
 		
 		
