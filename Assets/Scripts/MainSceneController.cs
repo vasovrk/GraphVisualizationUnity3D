@@ -189,7 +189,7 @@ public class MainSceneController : MonoBehaviour
 	}
 
 	public void OnQuitBtnPressed(){
-		Debug.Log ("skatoules");
+		Debug.Log ("Checking That Application will quit");
 		Application.Quit ();
 	}
 
