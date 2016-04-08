@@ -32,17 +32,38 @@ public class MainSceneController : MonoBehaviour
 	public BFS bfs;
 	public DFS dfs;
 
-	public GameObject demoPrefab;
-	public GameObject d;
+	public GameObject flamePrefab;
+	private GameObject flame;
+
 	public Dictionary<NodeState, Color> materialMapper;
 
-	private GridAdjacencyCalc nodeAdjacency;
+	private AdjacencyCalc nodeAdjacency;
+
+
+	private GameObject startGameObject;
+	ParticleSystem StartNodeParticle;
+	ParticleSystem.EmissionModule StartNodeEmissionModule;
+
+	private GameObject endGameObject;
+	private ParticleSystem EndNodeParticleSystem;
+	private ParticleSystem.EmissionModule EndNodeEmissionModule;
 
 	void Start ()
 	{
 			
 		bfs = new BFS (visitedMaterial, neighbourMaterial);
 		dfs = new DFS (visitedMaterial, neighbourMaterial);
+
+		startGameObject = GameObject.Find ("StartNodeParticleSystem");
+		StartNodeParticle = startGameObject.GetComponent<ParticleSystem> ();
+
+		StartNodeEmissionModule = StartNodeParticle.emission;
+
+		endGameObject = GameObject.Find ("EndNodeParticleSystem");
+		EndNodeParticleSystem = endGameObject.GetComponent<ParticleSystem> ();
+
+		EndNodeEmissionModule = EndNodeParticleSystem.emission;
+
 
 		int counter = 0;
 	
@@ -52,8 +73,6 @@ public class MainSceneController : MonoBehaviour
 		float halfHeight = gridHeight / 2.0f;
 
 
-			
-
 		for (int i = 0; i < gridHeight; i++) {
 			for (int j = 0; j < gridWidth; j++) {
 				GameObject sphere = GameObject.CreatePrimitive (PrimitiveType.Sphere);
@@ -61,6 +80,7 @@ public class MainSceneController : MonoBehaviour
 				sphere.transform.localPosition = new Vector3 ((i - halfHeight) + offset, 0, (j - halfWidth) + offset);
 				
 				sphere.GetComponent<MeshRenderer> ().material = nodeDefaultMaterial;
+
 
 				gridArray [i, j] = counter;
 
@@ -78,13 +98,10 @@ public class MainSceneController : MonoBehaviour
 			}
 		}
 
-		nodeAdjacency = new GridAdjacencyCalc (gridArray, gridHeight, gridWidth, nodes);
+		nodeAdjacency = new AdjacencyCalc (gridArray, gridHeight, gridWidth, nodes);
 		nodeAdjacency.adjacencyMap ();
 
 	}
-
-
-
 
 	private Node findNodeInNodeList (int nodeValue)
 	{
@@ -114,7 +131,7 @@ public class MainSceneController : MonoBehaviour
 		}
 
 		HandleMouseEvents ();
-		HandleKeyboardEvents ();
+		//HandleKeyboardEvents ();
 	}
 
 	bool pathFound = false;
@@ -145,9 +162,9 @@ public class MainSceneController : MonoBehaviour
 				continue;
 			
 			}
-			d = (GameObject)Instantiate (demoPrefab);
-			d.transform.localPosition = node.objReference.transform.localPosition;
-			PathParticle = d.GetComponent<ParticleSystem> ();
+			flame = (GameObject)Instantiate (flamePrefab);
+			flame.transform.localPosition = node.objReference.transform.localPosition;
+			PathParticle = flame.GetComponent<ParticleSystem> ();
 			ParticleSystem.EmissionModule em = PathParticle.emission;
 			em.enabled = true;
 			PathParticle.startSize = 0.7f;
@@ -159,27 +176,28 @@ public class MainSceneController : MonoBehaviour
 
 
 	}
-
-	private void HandleKeyboardEvents ()
-	{
-		
-		if (Input.GetKeyDown (KeyCode.B) && (pathFound == false)) {
-			
+	public void OnBFSbtnPressed(){
+		if (pathFound == false) {
 			FindPath ("BFS");
-		}
-		if (Input.GetKeyDown (KeyCode.D) && (pathFound == false)) {
-
-			FindPath ("DFS");
-		}
-		if (Input.GetKeyDown (KeyCode.E)) {
-			Debug.Log ("SKATOULES");
-			Application.Quit ();
-
 		}
 	}
 
-	GameObject startNodePrefab;
-	GameObject endNodePrefab;
+	public void OnDFSbtnPressed(){
+		if (pathFound == false) {
+			FindPath ("DFS");
+		}
+	}
+
+	public void OnQuitBtnPressed(){
+		Debug.Log ("skatoules");
+		Application.Quit ();
+	}
+
+	public void OnChangeSceneBtnPressed(){
+		SceneManager.LoadScene ("SecondScene");	
+	}
+		
+
 
 	private void HandleMouseEvents ()
 	{
@@ -187,8 +205,14 @@ public class MainSceneController : MonoBehaviour
 
 	
 		if (Input.GetMouseButtonDown (0)) {
-			try{
+			RaycastHit hit = castObject ();
+			if (hit.collider == null || hit.collider.name.Equals("BFS") || hit.collider.name.Equals("DFS") || 
+				hit.collider.name.Equals("ChangeScreen") || hit.collider.name.Equals("Quit") ){
+
+				return;
+			}
 			pathFound = false;
+
 			foreach (Node n in nodes) {
 
 				if (n == startNode) {
@@ -207,24 +231,22 @@ public class MainSceneController : MonoBehaviour
 
 			if (this.startNode != null) {
 				this.startNode.objReference.GetComponent<MeshRenderer> ().material = nodeDefaultMaterial;
+				StartNodeEmissionModule.enabled = false;
+				StartNodeParticle.startSize = 0;
 				this.startNode = null;
 			
 			}
 		
 
-			var hit = castObject ();
-			
+
 			Debug.Log ("Start Node: " + hit.transform);
 		
 			this.startNode = findNodeInNodeList (int.Parse (hit.collider.name));
 		
 		
 				
-
-			GameObject startGameObject = GameObject.Find ("StartNodeParticleSystem");
-			ParticleSystem StartNodeParticle = startGameObject.GetComponent<ParticleSystem> ();
-
-			ParticleSystem.EmissionModule StartNodeEmissionModule = StartNodeParticle.emission;
+				
+			
 			StartNodeEmissionModule.enabled = true;
 			StartNodeParticle.startSize = 0.7f;
 
@@ -233,15 +255,17 @@ public class MainSceneController : MonoBehaviour
 			this.startNode.nodeParticleSystem = StartNodeParticle;
 
 			this.startNode.objReference.GetComponent<MeshRenderer> ().material = startNodeMaterial;
-			}catch(NullReferenceException e){
-				Debug.Log ("No Node has been selected");
-			}
 
-		}
+		} 
 
 		if (Input.GetMouseButtonDown (1)) {
-			pathFound = false;
+			var hit = castObject ();
+			if (hit.collider == null || hit.collider.name.Equals("BFS") || hit.collider.name.Equals("DFS") || 
+				hit.collider.name.Equals("ChangeScreen") || hit.collider.name.Equals("Quit") ){
 
+				return;
+			}
+			pathFound = false;
 			foreach (Node n in nodes) {
 
 				if (n == startNode) {
@@ -261,30 +285,18 @@ public class MainSceneController : MonoBehaviour
 
 			if (this.endNode != null) {
 				this.endNode.objReference.GetComponent<MeshRenderer> ().material = nodeDefaultMaterial;
+				EndNodeEmissionModule.enabled = false;
+				EndNodeParticleSystem.startSize = 0;
+
 				this.endNode = null;
 			}
 				
-			foreach (Node n in nodes) {
-
-				if (n.objReference.GetComponent<MeshRenderer> ().material == startNodeMaterial) {
-					n.objReference.GetComponent<MeshRenderer> ().material = nodeDefaultMaterial;
-				}
-
-
-
-			}
-
-			var hit = castObject ();
 
 			Debug.Log ("End Node: " + hit.transform);
 			this.endNode = findNodeInNodeList (int.Parse (hit.collider.name));
 
-
-			GameObject endGameObject = GameObject.Find ("EndNodeParticleSystem");
-		
-			ParticleSystem EndNodeParticleSystem = endGameObject.GetComponent<ParticleSystem> ();
+					
 			EndNodeParticleSystem.Play ();
-			ParticleSystem.EmissionModule EndNodeEmissionModule = EndNodeParticleSystem.emission;
 			EndNodeEmissionModule.enabled = true;
 			EndNodeParticleSystem.startSize = 0.7f;
 
@@ -303,8 +315,8 @@ public class MainSceneController : MonoBehaviour
 	static void DestroyFlamePrefabs ()
 	{
 		GameObject[] allPrefabs;
-		if (GameObject.FindGameObjectsWithTag ("demoPrefab") != null) {
-			allPrefabs = GameObject.FindGameObjectsWithTag ("demoPrefab");
+		if (GameObject.FindGameObjectsWithTag ("flamePrefab") != null) {
+			allPrefabs = GameObject.FindGameObjectsWithTag ("flamePrefab");
 			for (int i = 0; i < allPrefabs.Length; i++) {
 				Destroy (allPrefabs [i]);
 			}

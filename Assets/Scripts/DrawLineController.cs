@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class DrawLineController : MonoBehaviour
 {
@@ -162,15 +163,25 @@ public class DrawLineController : MonoBehaviour
 		}
 
 		drawEdges ();
+		startNode = node1;
 	}
 
-	private bool clicked;
+	private bool spanFound;
 	// Update is called once per frame
 	void FixedUpdate ()
 	{
 		
-		if (Input.GetMouseButtonDown (0) && clicked == false) {
+		if (Input.GetMouseButtonDown (0)) {
 			
+			var hit = castObject ();
+			Debug.Log (hit.collider.tag.ToString ());
+			if (hit.collider == null || hit.collider.name.Equals ("BfsSpanTreeButton") || hit.collider.name.Equals ("DfsSpanTreeButton") ||
+			    hit.collider.name.Equals ("ChangeScreen") || hit.collider.name.Equals ("Quit")) {
+
+				return;
+			}
+
+			spanFound = false;
 			GameObject[] allLines;
 			if (GameObject.FindGameObjectsWithTag ("linePrefab") != null) {
 				allLines = GameObject.FindGameObjectsWithTag ("linePrefab");
@@ -187,24 +198,19 @@ public class DrawLineController : MonoBehaviour
 			}
 
 			if (startNode != null) {
-				//startNode.objReference.GetComponent<MeshRenderer> ().material = defaultNodeMaterial;
+				startNode.objReference.GetComponent<MeshRenderer> ().material = defaultNodeMaterial;
 				startNode = null;
 
 
 
 			}
 
-		//	Debug.Log ("skata");
-			var hit = castObject ();
+
 			startNode = findNodeInNodeList (int.Parse (hit.collider.name));
 			startNodeParticle.transform.localPosition = startNode.objReference.transform.localPosition;
 			startNode.objReference.GetComponent<MeshRenderer> ().material = startNodeMaterial;
-			clicked = true;
 		}
-
-
-	
-
+			
 	}
 
 	GameObject line;
@@ -243,13 +249,12 @@ public class DrawLineController : MonoBehaviour
 	public void DrawSpannTreeWithBFS ()
 	{
 		
-		if (startNode != null) {
+		if (startNode != null && spanFound == false) {
 			BFS bfs = new BFS ();
 
-			//bfs.findSpanTree (startNode);
 			bfs.findPath (startNode, nodes [7], true);
 			DrawSpanTreeEdges ();
-			clicked = false;
+			spanFound = true;
 		}
 
 
@@ -258,14 +263,12 @@ public class DrawLineController : MonoBehaviour
 	public void DrawSpannTreeWithDFS ()
 	{
 
-		if (startNode != null) {
+		if (startNode != null && spanFound == false) {
 			DFS dfs = new DFS ();
 
-			//dfs.findDFS (startNode, nodes [7], true);
-			//dfs.dfsAlternative (startNode);
-			dfs.findDFS(startNode,nodes[7],true);
+			dfs.findDFS (startNode, nodes [7], true);
 			DrawSpanTreeEdges ();
-			clicked = false;
+			spanFound = true;
 		}
 
 
@@ -279,7 +282,7 @@ public class DrawLineController : MonoBehaviour
 			node.objReference.GetComponent<MeshRenderer> ().material = startNodeMaterial;
 			foreach (Node edge in node.Edges) {
 				GameObject line = GameObject.Find (Mathf.Min (node.NodeValue, edge.NodeValue).ToString () + ":" + Mathf.Max (node.NodeValue, edge.NodeValue).ToString ());
-			//	Debug.Log ("the line is:" + line.name);
+				//	Debug.Log ("the line is:" + line.name);
 				lineRenderer = line.GetComponent<LineRenderer> ();
 				lineRenderer.SetColors (startColor, endColor);
 			}
@@ -303,5 +306,16 @@ public class DrawLineController : MonoBehaviour
 			}
 		}
 		return null;
+	}
+
+	public void OnQuitBtnPressed ()
+	{
+		Debug.Log ("skatoules");
+		Application.Quit ();
+	}
+
+	public void OnChangeSceneBtnPressed ()
+	{
+		SceneManager.LoadScene ("MainScene");	
 	}
 }
