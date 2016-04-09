@@ -147,7 +147,7 @@ public class MainSceneController : MonoBehaviour
 
 	private void FindPath (String algorithm)
 	{
-		  
+		//The path with the selected algorithm is being found - a list of Node objects
 		LinkedList<Node> path = new LinkedList<Node> ();
 		if (algorithm.Equals ("BFS")) {
 			path = bfs.findPath (startNode, endNode, false);
@@ -160,7 +160,7 @@ public class MainSceneController : MonoBehaviour
 		pathFound = true;
 
 		foreach (Node node in path) {
-			
+			//If the current node is a startNode or an endNode, we don't want to change appearance
 			if (node.NodeValue == startNode.NodeValue) {
 				node.objReference.GetComponent<MeshRenderer> ().material = pathMaterial;
 				continue;
@@ -170,6 +170,7 @@ public class MainSceneController : MonoBehaviour
 				continue;
 			
 			}
+			//That way we create a flame prefab with the appropriate particle, material and position
 			flame = (GameObject)Instantiate (flamePrefab);
 			flame.transform.localPosition = node.objReference.transform.localPosition;
 			PathParticle = flame.GetComponent<ParticleSystem> ();

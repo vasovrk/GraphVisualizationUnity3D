@@ -10,11 +10,6 @@ public class SecondSceneController : MonoBehaviour
 	private float counter;
 	private float dist;
 
-	public Transform origin;
-	public Transform destination;
-	public Transform destination2;
-	public float lineDrawSpeed = 6f;
-
 	public Material startNodeMaterial;
 	public Material defaultNodeMaterial;
 
@@ -25,7 +20,6 @@ public class SecondSceneController : MonoBehaviour
 	public GameObject linePrefab;
 	private GameObject l;
 
-	public GameObject button;
 	private Node startNode;
 	private ParticleSystem startNodeParticle;
 
@@ -38,141 +32,82 @@ public class SecondSceneController : MonoBehaviour
 	void Start ()
 	{
 
-		instructions = GameObject.FindGameObjectWithTag("instructionsText");
-		instructionsToggle = GameObject.FindGameObjectWithTag("instructionsToggle");
+		instructions = GameObject.FindGameObjectWithTag ("instructionsText");
+		instructionsToggle = GameObject.FindGameObjectWithTag ("instructionsToggle");
 
 		instructions.SetActive (false);
 		nodes = new List<Node> ();
 
-		n = (GameObject)Instantiate (nodePrefab);
-		n.transform.localPosition = new Vector3 (0, 24, 0);
 
-		GameObject startGameObject = GameObject.Find ("StartNodeParticleSystem");
-		startNodeParticle = startGameObject.GetComponent<ParticleSystem> ();
-		startNodeParticle.transform.localPosition = n.transform.localPosition;
-		ParticleSystem.EmissionModule em = startNodeParticle.emission;
-		em.enabled = true;
-		startNodeParticle.startSize = 3.0f;
-		startNodeParticle.Play ();
+		Vector3[] positions = new Vector3[8];
+		positions [0] = new Vector3 (0, 24, 0);
+		positions [1] = new Vector3 (-24, 10, 0);
+		positions [2] = new Vector3 (0, 10, 0);
+		positions [3] = new Vector3 (24, 10, 0);
+		positions [4] = new Vector3 (-8.5f, 0, 0);
+		positions [5] = new Vector3 (8.5f, 0, 0);
+		positions [6] = new Vector3 (38.5f, 0, 0);
+		positions [7] = new Vector3 (8.5f, -10, 0);
 
-//		Vector3[] positions;
-//		positions [0] = new Vector3 (-24, 10, 0);
-//		positions [1] = new Vector3 (0, 10, 0);
-//		positions [2] = new Vector3 (24, 10, 0);
-//		positions [3] = new Vector3 (-8.5f, 0, 0);
-//		positions [4] = new Vector3 (8.5f, 0, 0);
-//		positions [5] = new Vector3 (38.5f, 0, 0);
-//		positions [6] = new Vector3 (8.5f, -10, 0);
-//
-//
-//		for (int i = 0; i <= 6; i++) {
-//			n = (GameObject)Instantiate (nodePrefab);
-//			n.transform.localPosition = positions[i];
-//			Node node =new Node ();
-//			node = new Node ();
-//			node.NodeValue = 2;
-//			node.objReference = n;
-//			nodes.Add (node);
-//		}
-		Node node1;
-		node1 = new Node ();
-		node1.NodeValue = 1;
-		node1.objReference = n;
-		nodes.Add (node1);
-		node1.objReference.GetComponent<MeshRenderer> ().material = startNodeMaterial;
-		startNode = node1;
+		for (int i = 0; i < 8; i++) {
+			n = (GameObject)Instantiate (nodePrefab);
+			n.transform.localPosition = positions [i];
+			Node node = new Node ();
+			node.NodeValue = i + 1;
+			node.objReference = n;
+			nodes.Add (node);
+		}
 
-		n = (GameObject)Instantiate (nodePrefab);
-		n.transform.localPosition = new Vector3 (-24, 10, 0);
-		Node node2;
-		node2 = new Node ();
-		node2.NodeValue = 2;
-		node2.objReference = n;
-		nodes.Add (node2);
-
-		n = (GameObject)Instantiate (nodePrefab);
-		n.transform.localPosition = new Vector3 (0, 10, 0);
-		Node node3;
-		node3 = new Node ();
-		node3.NodeValue = 3;
-		node3.objReference = n;
-		nodes.Add (node3);
-//
-		n = (GameObject)Instantiate (nodePrefab);
-		n.transform.localPosition = new Vector3 (24, 10, 0);
-		Node node4;
-		node4 = new Node ();
-		node4.NodeValue = 4;
-		node4.objReference = n;
-		nodes.Add (node4);
-
-		n = (GameObject)Instantiate (nodePrefab);
-		n.transform.localPosition = new Vector3 (-8.5f, 0, 0);
-		Node node5;
-		node5 = new Node ();
-		node5.NodeValue = 5;
-		node5.objReference = n;
-		nodes.Add (node5);
-
-		n = (GameObject)Instantiate (nodePrefab);
-		n.transform.localPosition = new Vector3 (8.5f, 0, 0);
-		Node node6;
-		node6 = new Node ();
-		node6.NodeValue = 6;
-		node6.objReference = n;
-		nodes.Add (node6);
-
-		n = (GameObject)Instantiate (nodePrefab);
-		n.transform.localPosition = new Vector3 (38.5f, 0, 0);
-		Node node7;
-		node7 = new Node ();
-		node7.NodeValue = 7;
-		node7.objReference = n;
-		nodes.Add (node7);
-
-		n = (GameObject)Instantiate (nodePrefab);
-		n.transform.localPosition = new Vector3 (8.5f, -10, 0);
-		Node node8;
-		node8 = new Node ();
-		node8.NodeValue = 8;
-		node8.objReference = n;
-		nodes.Add (node8);
+	
+		nodes [0].Neighbours.Add (nodes [1]);
+		nodes [0].Neighbours.Add (nodes [2]);
+		nodes [0].Neighbours.Add (nodes [3]);
 
 
-		node1.Neighbours.Add (node2);
-		node1.Neighbours.Add (node3);
-		node1.Neighbours.Add (node4);
-		node2.Neighbours.Add (node1);
-		node2.Neighbours.Add (node5);
-		node3.Neighbours.Add (node1);
-		node3.Neighbours.Add (node5);
-		node4.Neighbours.Add (node1);
-		node4.Neighbours.Add (node6);
-		node4.Neighbours.Add (node7);
-		node5.Neighbours.Add (node2);
-		node5.Neighbours.Add (node3);
-		node5.Neighbours.Add (node8);
-		node6.Neighbours.Add (node4);
-		node6.Neighbours.Add (node8);
-		node7.Neighbours.Add (node4);
-		node7.Neighbours.Add (node8);
-		node8.Neighbours.Add (node5);
-		node8.Neighbours.Add (node6);
-		node8.Neighbours.Add (node7);
+		nodes [1].Neighbours.Add (nodes [0]);
+		nodes [1].Neighbours.Add (nodes [4]);
 
-//		dist = Vector3.Distance (nodes[0].objReference.transform.position, nodes[1].objReference.transform.position);
+		nodes [2].Neighbours.Add (nodes [0]);
+		nodes [2].Neighbours.Add (nodes [4]);
+
+		nodes [3].Neighbours.Add (nodes [0]);
+		nodes [3].Neighbours.Add (nodes [5]);
+		nodes [3].Neighbours.Add (nodes [6]);
+
+		nodes [4].Neighbours.Add (nodes [1]);
+		nodes [4].Neighbours.Add (nodes [2]);
+		nodes [4].Neighbours.Add (nodes [7]);
+
+		nodes [5].Neighbours.Add (nodes [3]);
+		nodes [5].Neighbours.Add (nodes [7]);
+
+		nodes [6].Neighbours.Add (nodes [3]);
+		nodes [6].Neighbours.Add (nodes [7]);
+
+		nodes [7].Neighbours.Add (nodes [4]);
+		nodes [7].Neighbours.Add (nodes [5]);
+		nodes [7].Neighbours.Add (nodes [6]);
+
 		lineRenderer = GetComponent<LineRenderer> ();
-//		lineRenderer.SetPosition (0, nodes[0].objReference.transform.position);
-//		lineRenderer.SetWidth (.45f, .45f);
-//		lineRenderer.SetVertexCount(20);
+
 		int counter = 1;
 		foreach (Node noda in nodes) {
 			noda.objReference.name = counter.ToString ();
 			counter++;
 		}
+		startNode = nodes[0];
+
+		GameObject startGameObject = GameObject.Find ("StartNodeParticleSystem");
+		startNodeParticle = startGameObject.GetComponent<ParticleSystem> ();
+		startNodeParticle.transform.localPosition = nodes[0].objReference.transform.localPosition;
+		ParticleSystem.EmissionModule em = startNodeParticle.emission;
+		em.enabled = true;
+		startNodeParticle.startSize = 3.0f;
+		startNodeParticle.Play ();
+		nodes[0].objReference.GetComponent<MeshRenderer> ().material = startNodeMaterial;
 
 		drawEdges ();
-		startNode = node1;
+
 	}
 
 	private bool spanFound;
@@ -210,8 +145,6 @@ public class SecondSceneController : MonoBehaviour
 				startNode.objReference.GetComponent<MeshRenderer> ().material = defaultNodeMaterial;
 				startNode = null;
 
-
-
 			}
 
 
@@ -228,28 +161,28 @@ public class SecondSceneController : MonoBehaviour
 	private void drawEdges ()
 	{
 		visited = new List<Node> ();
-		//line = linePrefab.GetComponent<LineRenderer> ();
+
 		for (int i = 0; i < nodes.Count; i++) {
-			Node parent = nodes [i];
+			Node currentNode = nodes [i];
 			List<Node> neighbours = nodes [i].Neighbours;
 			for (int j = 0; j < neighbours.Count; j++) {
 				Node neighbour = neighbours [j];
 				if (!visited.Contains (neighbour)) {
-					dist = Vector3.Distance (parent.objReference.transform.position, neighbour.objReference.transform.position);
+					dist = Vector3.Distance (currentNode.objReference.transform.position, neighbour.objReference.transform.position);
 					float lineDistance = Mathf.Lerp (0, dist, dist);
-					Vector3 segmentVector = lineDistance * Vector3.Normalize (neighbour.objReference.transform.position - parent.objReference.transform.position) + parent.objReference.transform.position;
+					Vector3 segmentVector = lineDistance * Vector3.Normalize (neighbour.objReference.transform.position - currentNode.objReference.transform.position) + currentNode.objReference.transform.position;
 					l = GameObject.Instantiate (linePrefab) as GameObject;
-					//  l = linePrefab.GetComponent<LineRenderer> ();
+
 					l.GetComponent<LineRenderer> ().SetWidth (.45f, .45f);
-					l.GetComponent<LineRenderer> ().SetPosition (0, parent.objReference.transform.position);
+					l.GetComponent<LineRenderer> ().SetPosition (0, currentNode.objReference.transform.position);
 
 					l.GetComponent<LineRenderer> ().SetPosition (1, segmentVector);
-					l.GetComponent<LineRenderer> ().name = parent.NodeValue + ":" + neighbour.NodeValue;
+					l.GetComponent<LineRenderer> ().name = currentNode.NodeValue + ":" + neighbour.NodeValue;
 
 				}
 			
 			}
-			visited.Add (parent);
+			visited.Add (currentNode);
 		}
 	}
 
@@ -328,11 +261,12 @@ public class SecondSceneController : MonoBehaviour
 		SceneManager.LoadScene ("MainScene");	
 	}
 
-	public void instructionsVisible(){
+	public void instructionsVisible ()
+	{
 
 		if (instructionsToggle.GetComponent<Toggle> ().isOn) {
 			instructions.SetActive (true);
-		} else if(!instructionsToggle.GetComponent<Toggle> ().isOn){
+		} else if (!instructionsToggle.GetComponent<Toggle> ().isOn) {
 			instructions.SetActive (false);
 		}
 		Debug.Log ("something");
