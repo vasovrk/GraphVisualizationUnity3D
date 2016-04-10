@@ -168,7 +168,6 @@ public class MainSceneController : MonoBehaviour
 			if (node.NodeValue == endNode.NodeValue) {
 				node.objReference.GetComponent<MeshRenderer> ().material = pathMaterial;
 				continue;
-			
 			}
 			//That way we create a flame prefab with the appropriate particle, material and position
 			flame = (GameObject)Instantiate (flamePrefab);
@@ -262,7 +261,7 @@ public class MainSceneController : MonoBehaviour
 
 			StartNodeParticle.transform.localPosition = this.startNode.objReference.transform.localPosition;
 			
-			this.startNode.nodeParticleSystem = StartNodeParticle;
+//			this.startNode.nodeParticleSystem = StartNodeParticle;
 
 			this.startNode.objReference.GetComponent<MeshRenderer> ().material = startNodeMaterial;
 
@@ -314,7 +313,7 @@ public class MainSceneController : MonoBehaviour
 			EndNodeParticleSystem.transform.localPosition = this.endNode.objReference.transform.localPosition;
 
 
-			this.endNode.nodeParticleSystem = EndNodeParticleSystem;
+//			this.endNode.nodeParticleSystem = EndNodeParticleSystem;
 
 
 			this.endNode.objReference.GetComponent<MeshRenderer> ().material = endNodeMaterial;

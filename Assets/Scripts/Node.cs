@@ -18,12 +18,7 @@ public class Node {
 
 	public GameObject objReference;
 
-	public ParticleSystem nodeParticleSystem;
-
 	public float animationOffset; 
-
-	public NodeState nodeState;
-
 
 
 	public Node(){
@@ -78,16 +73,5 @@ public class Node {
 
 		set{ objReference = value; }
 	}
-
-	public ParticleSystem NodeParticleSystem{
-		get{ return nodeParticleSystem; }
-
-		set{ nodeParticleSystem = value; }
-	}
-
-	public NodeState NodeState{
-		get{ return nodeState; }
-
-		set{ NodeState = value; }
-	}
+		
 }
