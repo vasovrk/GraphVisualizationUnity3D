@@ -8,7 +8,7 @@ public class SecondSceneController : MonoBehaviour
 {
 	private LineRenderer lineRenderer;
 	private float counter;
-	private float dist;
+	private float distance;
 
 	public Material startNodeMaterial;
 	public Material defaultNodeMaterial;
@@ -18,11 +18,12 @@ public class SecondSceneController : MonoBehaviour
 	public List<Node> nodes;
 
 	public GameObject linePrefab;
-	private GameObject l;
+	private GameObject line;
 
 	private Node startNode;
 	private ParticleSystem startNodeParticle;
 
+	// Color -> number divided with 255, Color32 -> number between 0 and 255
 	private Color32 defaultStartLineColor = new Color32 (187, 240, 36, 255);
 	private Color32 defaultEndLineColor = new Color32 (11, 248, 71, 255);
 
@@ -91,8 +92,8 @@ public class SecondSceneController : MonoBehaviour
 		lineRenderer = GetComponent<LineRenderer> ();
 
 		int counter = 1;
-		foreach (Node noda in nodes) {
-			noda.objReference.name = counter.ToString ();
+		foreach (Node node in nodes) {
+			node.objReference.name = counter.ToString ();
 			counter++;
 		}
 		startNode = nodes[0];
@@ -155,7 +156,7 @@ public class SecondSceneController : MonoBehaviour
 			
 	}
 
-	GameObject line;
+
 	private List<Node> visited;
 
 	private void drawEdges ()
@@ -167,17 +168,16 @@ public class SecondSceneController : MonoBehaviour
 			List<Node> neighbours = nodes [i].Neighbours;
 			for (int j = 0; j < neighbours.Count; j++) {
 				Node neighbour = neighbours [j];
+				//If the neighbour exists in the visited list it means that the line has already been drawn
 				if (!visited.Contains (neighbour)) {
-					dist = Vector3.Distance (currentNode.objReference.transform.position, neighbour.objReference.transform.position);
-					float lineDistance = Mathf.Lerp (0, dist, dist);
-					Vector3 segmentVector = lineDistance * Vector3.Normalize (neighbour.objReference.transform.position - currentNode.objReference.transform.position) + currentNode.objReference.transform.position;
-					l = GameObject.Instantiate (linePrefab) as GameObject;
+					
+					line = GameObject.Instantiate (linePrefab) as GameObject;
 
-					l.GetComponent<LineRenderer> ().SetWidth (.45f, .45f);
-					l.GetComponent<LineRenderer> ().SetPosition (0, currentNode.objReference.transform.position);
+					line.GetComponent<LineRenderer> ().SetWidth (.45f, .45f);
+					line.GetComponent<LineRenderer> ().SetPosition (0, currentNode.objReference.transform.position);
 
-					l.GetComponent<LineRenderer> ().SetPosition (1, segmentVector);
-					l.GetComponent<LineRenderer> ().name = currentNode.NodeValue + ":" + neighbour.NodeValue;
+					line.GetComponent<LineRenderer> ().SetPosition (1, neighbour.objReference.transform.position);
+					line.GetComponent<LineRenderer> ().name = currentNode.NodeValue + ":" + neighbour.NodeValue;
 
 				}
 			
@@ -216,7 +216,7 @@ public class SecondSceneController : MonoBehaviour
 
 	}
 
-	void DrawSpanTreeEdges ()
+	private void DrawSpanTreeEdges ()
 	{
 		Color startColor = new Color (0.043137255f, 0.20392157f, 0.97254902f, 1f);
 		Color endColor = new Color (0.88235294f, 0.14117647f, 0.82745098f, 1f);
@@ -231,7 +231,7 @@ public class SecondSceneController : MonoBehaviour
 		}
 	}
 
-	static RaycastHit castObject ()
+	private static RaycastHit castObject ()
 	{
 		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 		RaycastHit hit;
