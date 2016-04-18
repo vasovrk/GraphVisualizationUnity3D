@@ -119,7 +119,7 @@ public class SecondSceneController : MonoBehaviour
 		if (Input.GetMouseButtonDown (0)) {
 			
 			var hit = castObject ();
-			Debug.Log (hit.collider.tag.ToString ());
+			//Debug.Log (hit.collider.tag.ToString ());
 			if (hit.collider == null || hit.collider.name.Equals ("BfsSpanTreeButton") || hit.collider.name.Equals ("DfsSpanTreeButton") ||
 			    hit.collider.name.Equals ("ChangeScreen") || hit.collider.name.Equals ("Quit")) {
 
@@ -224,7 +224,6 @@ public class SecondSceneController : MonoBehaviour
 			node.objReference.GetComponent<MeshRenderer> ().material = startNodeMaterial;
 			foreach (Node edge in node.Edges) {
 				GameObject line = GameObject.Find (Mathf.Min (node.NodeValue, edge.NodeValue).ToString () + ":" + Mathf.Max (node.NodeValue, edge.NodeValue).ToString ());
-				//	Debug.Log ("the line is:" + line.name);
 				lineRenderer = line.GetComponent<LineRenderer> ();
 				lineRenderer.SetColors (startColor, endColor);
 			}
