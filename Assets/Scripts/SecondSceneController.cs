@@ -40,6 +40,7 @@ public class SecondSceneController : MonoBehaviour
 		nodes = new List<Node> ();
 
 
+
 		Vector3[] positions = new Vector3[8];
 		positions [0] = new Vector3 (0, 24, 0);
 		positions [1] = new Vector3 (-24, 10, 0);
