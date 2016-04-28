@@ -59,7 +59,7 @@ public class SecondSceneController : MonoBehaviour
 			nodes.Add (node);
 		}
 
-	
+
 		nodes [0].Neighbours.Add (nodes [1]);
 		nodes [0].Neighbours.Add (nodes [2]);
 		nodes [0].Neighbours.Add (nodes [3]);
@@ -115,13 +115,13 @@ public class SecondSceneController : MonoBehaviour
 	// Update is called once per frame
 	void FixedUpdate ()
 	{
-		
+
 		if (Input.GetMouseButtonDown (0)) {
-			
+
 			var hit = castObject ();
 			//Debug.Log (hit.collider.tag.ToString ());
 			if (hit.collider == null || hit.collider.name.Equals ("BfsSpanTreeButton") || hit.collider.name.Equals ("DfsSpanTreeButton") ||
-			    hit.collider.name.Equals ("ChangeScreen") || hit.collider.name.Equals ("Quit")) {
+				hit.collider.name.Equals ("ChangeScreen") || hit.collider.name.Equals ("Quit")) {
 
 				return;
 			}
@@ -153,7 +153,7 @@ public class SecondSceneController : MonoBehaviour
 			startNodeParticle.transform.localPosition = startNode.objReference.transform.localPosition;
 			startNode.objReference.GetComponent<MeshRenderer> ().material = startNodeMaterial;
 		}
-			
+
 	}
 
 
@@ -170,7 +170,7 @@ public class SecondSceneController : MonoBehaviour
 				Node neighbour = neighbours [j];
 				//If the neighbour exists in the visited list it means that the line has already been drawn
 				if (!visited.Contains (neighbour)) {
-					
+
 					line = GameObject.Instantiate (linePrefab) as GameObject;
 
 					line.GetComponent<LineRenderer> ().SetWidth (.45f, .45f);
@@ -180,7 +180,7 @@ public class SecondSceneController : MonoBehaviour
 					line.GetComponent<LineRenderer> ().name = currentNode.NodeValue + ":" + neighbour.NodeValue;
 
 				}
-			
+
 			}
 			visited.Add (currentNode);
 		}
@@ -190,7 +190,7 @@ public class SecondSceneController : MonoBehaviour
 
 	public void DrawSpannTreeWithBFS ()
 	{
-		
+
 		if (startNode != null && spanFound == false) {
 			BFS bfs = new BFS ();
 
